@@ -16,25 +16,26 @@ func TestWithValidData(t *testing.T) {
 	segmentName := "some-new-segment"
 	var responseBody map[string]interface{}
 
-	req, _ := http.NewRequest("POST", "/segments", bytes.NewBufferString(`{"name": "`+segmentName+`"}"`))
+	req, _ := http.NewRequest("POST", "/segments", bytes.NewBufferString(`{"name": "`+segmentName+`"}`))
+	req.Header.Set("Content-Type", "application/json")
 
 	// when we call the endpoint
 	response := executeRequest(req)
 	json.Unmarshal([]byte(response.Body.String()), &responseBody)
 
 	// then it returns the newly created element
-	assert.Equal(t, response.Code, http.StatusOK, "Response code should be 200/OK")
+	assert.Equal(t, http.StatusCreated, response.Code, "Response code should be 200/OK")
 	assert.NotNil(t, responseBody)
-	assert.Equal(t, responseBody["name"], segmentName, "Should return the given segment name")
-	assert.Equal(t, responseBody["id"], 1)
+	assert.Equal(t, segmentName, responseBody["name"], "Should return the given segment name")
+	assert.Equal(t, 1, int(responseBody["id"].(float64)))
 
 	// when we get all the segments from the database
 	segmentsFromDatabase := getSegments()
 
 	// then there will be only our newly created element in it
 	assert.Equal(t, len(segmentsFromDatabase), 1, "One record should be in the database")
-	assert.Equal(t, segmentsFromDatabase[0]["name"], segmentName)
-	assert.Equal(t, segmentsFromDatabase[0]["id"], 1)
+	assert.Equal(t, segmentName, segmentsFromDatabase[0]["name"])
+	assert.Equal(t, int64(1), segmentsFromDatabase[0]["id"])
 }
 
 func executeRequest(req *http.Request) *httptest.ResponseRecorder {
@@ -58,7 +59,7 @@ func getSegments() []M {
 		)
 		rows.Scan(&id, &name)
 
-		var row M
+		row := make(M)
 		row["name"] = name
 		row["id"] = id
 		result = append(result, row)

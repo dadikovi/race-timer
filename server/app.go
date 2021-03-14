@@ -33,10 +33,11 @@ func (a *App) Run(addr string) {
 	log.Fatal(http.ListenAndServe(addr, a.Router))
 }
 
-func (a *App) getTimeTable(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Time table")
+func (a *App) initializeRoutes() {
+	a.Router.HandleFunc("/segments", a.createSegmentMiddleware).Methods("POST")
 }
 
-func (a *App) initializeRoutes() {
-	a.Router.HandleFunc("/results", a.getTimeTable).Methods("GET")
+func (a *App) createSegmentMiddleware(w http.ResponseWriter, r *http.Request) {
+	var segmentEndpoint SegmentEndpoint
+	segmentEndpoint.create(w, r, a.DB)
 }
