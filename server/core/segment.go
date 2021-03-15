@@ -6,7 +6,6 @@ import (
 	"log"
 )
 
-// TODO: normally we shouldn't export members of this domain object.
 type Segment struct {
 	id   int64
 	name string
