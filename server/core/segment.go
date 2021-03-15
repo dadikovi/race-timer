@@ -28,6 +28,36 @@ func MakeSegment(jsonRepresentation string) (Segment, error) {
 	return segment, nil
 }
 
+func FetchAll(db *sql.DB) ([]Segment, error) {
+	var result []Segment
+	var rows, err = db.Query("SELECT id, name FROM segments")
+
+	if err != nil {
+		log.Fatal("Could not get segments", err)
+		return nil, err
+	}
+
+	defer rows.Close()
+	for rows.Next() {
+		var id int64
+		var name string
+		err = rows.Scan(&id, &name)
+		if err != nil {
+			log.Fatal("Could not get segments", err)
+			return nil, err
+		}
+		result = append(result, Segment{id, name})
+	}
+	// get any error encountered during iteration
+
+	if err := rows.Err(); err != nil {
+		log.Fatal("Could not get segments", err)
+		return nil, err
+	}
+
+	return result, nil
+}
+
 func (s *Segment) ToJson() ([]byte, error) {
 	segmentDto := segmentDto{s.id, s.name}
 	j, err := json.Marshal(segmentDto)

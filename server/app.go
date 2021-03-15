@@ -35,9 +35,15 @@ func (a *App) Run(addr string) {
 
 func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/segments", a.createSegmentMiddleware).Methods("POST")
+	a.Router.HandleFunc("/segments", a.fetchAllSegmentMiddleware).Methods("GET")
 }
 
 func (a *App) createSegmentMiddleware(w http.ResponseWriter, r *http.Request) {
 	var segmentEndpoint SegmentEndpoint
 	segmentEndpoint.create(w, r, a.DB)
+}
+
+func (a *App) fetchAllSegmentMiddleware(w http.ResponseWriter, r *http.Request) {
+	var segmentEndpoint SegmentEndpoint
+	segmentEndpoint.fetchAll(w, r, a.DB)
 }

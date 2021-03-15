@@ -10,6 +10,24 @@ import (
 
 type SegmentEndpoint struct{}
 
+func (se *SegmentEndpoint) fetchAll(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+	var json = "["
+	var segments, err = core.FetchAll(db)
+
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, err.Error())
+	}
+
+	for _, s := range segments {
+		sjson, _ := s.ToJson()
+		json = json + string(sjson)
+	}
+
+	json = json + "]"
+
+	respondWithJSON(w, http.StatusOK, []byte(json))
+}
+
 func (se *SegmentEndpoint) create(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 	var body, bodyReadError = ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
