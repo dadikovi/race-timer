@@ -35,6 +35,8 @@ func clearTable() {
 
 	a.DB.Exec("DELETE FROM participants")
 	a.DB.Exec("ALTER SEQUENCE participants_id_seq RESTART WITH 1")
+
+	a.DB.Exec("DELETE FROM races")
 }
 
 const tableCreationQuery = `
@@ -50,7 +52,7 @@ CREATE TABLE IF NOT EXISTS groups
     id SERIAL,
     name TEXT NOT NULL,
 	start TIMESTAMP,
-	segment_id SERIAL,
+	segment_id INTEGER,
 	CONSTRAINT group_segment FOREIGN KEY(segment_id) REFERENCES segments(id),
     CONSTRAINT groups_pkey PRIMARY KEY (id)
 );
@@ -59,8 +61,15 @@ CREATE TABLE IF NOT EXISTS participants
 (
     id SERIAL,
 	finish TIMESTAMP,
-	group_id SERIAL,
+	group_id INTEGER,
+	race_time INTEGER,
 	CONSTRAINT participant_group FOREIGN KEY(group_id) REFERENCES groups(id),
     CONSTRAINT participants_key PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS races
+(
+	active_group_id INTEGER,
+	CONSTRAINT active_group FOREIGN KEY(active_group_id) REFERENCES groups(id)
 );
 `
