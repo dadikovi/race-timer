@@ -2,11 +2,15 @@ package main
 
 import (
 	"log"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"testing"
 )
 
 var a App
+
+type RAWROW map[string]interface{}
 
 func TestMain(m *testing.M) {
 	a.Initialize(
@@ -39,6 +43,13 @@ func clearTable() {
 	a.DB.Exec("DELETE FROM races")
 }
 
+func executeRequest(req *http.Request) *httptest.ResponseRecorder {
+	rr := httptest.NewRecorder()
+	a.Router.ServeHTTP(rr, req)
+
+	return rr
+}
+
 const tableCreationQuery = `
 CREATE TABLE IF NOT EXISTS segments
 (
@@ -50,7 +61,6 @@ CREATE TABLE IF NOT EXISTS segments
 CREATE TABLE IF NOT EXISTS groups
 (
     id SERIAL,
-    name TEXT NOT NULL,
 	start TIMESTAMP,
 	segment_id INTEGER,
 	CONSTRAINT group_segment FOREIGN KEY(segment_id) REFERENCES segments(id),
