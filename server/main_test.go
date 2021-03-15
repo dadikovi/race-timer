@@ -10,8 +10,6 @@ import (
 
 var a App
 
-type RAWROW map[string]interface{}
-
 func TestMain(m *testing.M) {
 	a.Initialize(
 		os.Getenv("RACE_TIMER_DB_USER"),
@@ -31,16 +29,27 @@ func ensureTableExists() {
 }
 
 func clearTable() {
-	a.DB.Exec("DELETE FROM segments")
-	a.DB.Exec("ALTER SEQUENCE segments_id_seq RESTART WITH 1")
-
-	a.DB.Exec("DELETE FROM groups")
-	a.DB.Exec("ALTER SEQUENCE groups_id_seq RESTART WITH 1")
-
-	a.DB.Exec("DELETE FROM participants")
-	a.DB.Exec("ALTER SEQUENCE participants_id_seq RESTART WITH 1")
-
-	a.DB.Exec("DELETE FROM races")
+	if _, err := a.DB.Exec("DELETE FROM participants"); err != nil {
+		log.Fatal(err)
+	}
+	if _, err := a.DB.Exec("ALTER SEQUENCE participants_id_seq RESTART WITH 1"); err != nil {
+		log.Fatal(err)
+	}
+	if _, err := a.DB.Exec("DELETE FROM groups"); err != nil {
+		log.Fatal(err)
+	}
+	if _, err := a.DB.Exec("ALTER SEQUENCE groups_id_seq RESTART WITH 1"); err != nil {
+		log.Fatal(err)
+	}
+	if _, err := a.DB.Exec("DELETE FROM segments"); err != nil {
+		log.Fatal(err)
+	}
+	if _, err := a.DB.Exec("ALTER SEQUENCE segments_id_seq RESTART WITH 1"); err != nil {
+		log.Fatal(err)
+	}
+	if _, err := a.DB.Exec("DELETE FROM races"); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func executeRequest(req *http.Request) *httptest.ResponseRecorder {

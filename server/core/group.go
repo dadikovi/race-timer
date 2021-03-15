@@ -27,7 +27,7 @@ func fetchGroupById(db *sql.DB, id int64) (Group, error) {
 		return group, err
 	}
 
-	segment, err := fetchSegmentById(db, parentSegmentId)
+	segment, err := FetchSegmentById(db, parentSegmentId)
 
 	if err != nil {
 		return group, err
@@ -38,17 +38,17 @@ func fetchGroupById(db *sql.DB, id int64) (Group, error) {
 	return group, nil
 }
 
-func (g *Group) Save(db *sql.DB) error {
+func (g Group) Save(db *sql.DB) (Group, error) {
 	err := db.QueryRow(
-		"INSERT INTO groups(segment_id) VALUES($1) RETURNING id",
+		"INSERT INTO groups(id, segment_id) VALUES(DEFAULT, $1) RETURNING id",
 		g.parentSegment.id).Scan(&g.id)
 
 	if err != nil {
-		log.Fatal("Could not save group ", g, err)
-		return err
+		log.Print("Could not save group ", g, err)
+		return g, err
 	}
 
-	return nil
+	return g, nil
 }
 
 func (g *Group) ToJson() ([]byte, error) {

@@ -81,7 +81,7 @@ func TestGetSegmentsWithEmptyDatabase(t *testing.T) {
 }
 
 func createSegment(segmentName string) {
-	if _, err := a.DB.Exec(`INSERT INTO segments (name) VALUES ($1)`, segmentName); err != nil {
+	if _, err := a.DB.Exec(`INSERT INTO segments (id, name) VALUES (DEFAULT, $1)`, segmentName); err != nil {
 		log.Panic(err)
 	}
 
