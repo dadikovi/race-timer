@@ -10,7 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestWithValidData(t *testing.T) {
+func TestPostWithValidData(t *testing.T) {
 	// given
 	clearTable()
 	segmentName := "some-new-segment"
@@ -38,6 +38,29 @@ func TestWithValidData(t *testing.T) {
 	assert.Equal(t, int64(1), segmentsFromDatabase[0]["id"])
 }
 
+func TestGetWithExistingData(t *testing.T) {
+	// given
+	clearTable()
+
+	segmentName := "some-new-segment"
+	createSegment(segmentName)
+
+	var responseBody map[string]interface{}
+
+	req, _ := http.NewRequest("GET", "/segments", nil)
+	req.Header.Set("Content-Type", "application/json")
+
+	// when we call the endpoint
+	response := executeRequest(req)
+	json.Unmarshal([]byte(response.Body.String()), &responseBody)
+
+	// then it returns the saved element
+	assert.Equal(t, http.StatusCreated, response.Code, "Response code should be 200/OK")
+	assert.NotNil(t, responseBody)
+	assert.Equal(t, segmentName, responseBody["name"], "Should return the given segment name")
+	assert.Equal(t, 1, int(responseBody["id"].(float64)))
+}
+
 func executeRequest(req *http.Request) *httptest.ResponseRecorder {
 	rr := httptest.NewRecorder()
 	a.Router.ServeHTTP(rr, req)
@@ -46,6 +69,10 @@ func executeRequest(req *http.Request) *httptest.ResponseRecorder {
 }
 
 type M map[string]interface{}
+
+func createSegment(segmentName string) {
+	a.DB.Exec(`INSERT INTO segments (name) VALUES (?)`, segmentName)
+}
 
 func getSegments() []M {
 	rows, _ := a.DB.Query("SELECT * FROM segments")
