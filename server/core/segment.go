@@ -27,6 +27,15 @@ func MakeSegment(jsonRepresentation string) (Segment, error) {
 	return segment, nil
 }
 
+func fetchSegmentById(db *sql.DB, id int64) (Segment, error) {
+	var segment = Segment{}
+
+	if err := db.QueryRow("SELECT id, name FROM segments WHERE id = $1", id).Scan(&segment.id, &segment.name); err != nil {
+		return segment, err
+	}
+	return segment, nil
+}
+
 func FetchAll(db *sql.DB) ([]Segment, error) {
 	var result []Segment
 	var rows, err = db.Query("SELECT id, name FROM segments")
