@@ -28,3 +28,11 @@
 cd server # If you are in the root directory of this repo
 go test -v
 ```
+
+# How to connect to database
+After you initiated the test database:
+
+```bash
+docker exec -it {docker container id} bash
+psql -U postgres -d postgres
+```

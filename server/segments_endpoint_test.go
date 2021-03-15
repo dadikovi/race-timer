@@ -5,15 +5,12 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-	"net/http/httptest"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-type M map[string]interface{}
-
-func TestPostWithValidData(t *testing.T) {
+func TestPostSegmentsWithValidData(t *testing.T) {
 	// given
 	clearTable()
 	segmentName := "some-new-segment"
@@ -41,14 +38,14 @@ func TestPostWithValidData(t *testing.T) {
 	assert.Equal(t, int64(1), segmentsFromDatabase[0]["id"])
 }
 
-func TestGetWithExistingData(t *testing.T) {
+func TestGetSegmentsWithExistingData(t *testing.T) {
 	// given
 	clearTable()
 
 	segmentName := "some-new-segment"
 	createSegment(segmentName)
 
-	var responseBody []M
+	var responseBody []RAWROW
 
 	req, _ := http.NewRequest("GET", "/segments", nil)
 	req.Header.Set("Content-Type", "application/json")
@@ -64,11 +61,11 @@ func TestGetWithExistingData(t *testing.T) {
 	assert.Equal(t, 1, int(responseBody[0]["id"].(float64)))
 }
 
-func TestGetWithEmptyDatabase(t *testing.T) {
+func TestGetSegmentsWithEmptyDatabase(t *testing.T) {
 	// given
 	clearTable()
 
-	var responseBody []M
+	var responseBody []RAWROW
 
 	req, _ := http.NewRequest("GET", "/segments", nil)
 	req.Header.Set("Content-Type", "application/json")
@@ -83,24 +80,17 @@ func TestGetWithEmptyDatabase(t *testing.T) {
 	assert.Equal(t, 0, len(responseBody))
 }
 
-func executeRequest(req *http.Request) *httptest.ResponseRecorder {
-	rr := httptest.NewRecorder()
-	a.Router.ServeHTTP(rr, req)
-
-	return rr
-}
-
 func createSegment(segmentName string) {
-	if _, err := a.DB.Exec(`INSERT INTO segments (name) VALUES ($1)`, segmentName); err != nil {
+	if _, err := a.DB.Exec(`INSERT INTO segments (id, name) VALUES (DEFAULT, $1)`, segmentName); err != nil {
 		log.Panic(err)
 	}
 
 }
 
-func getSegments() []M {
+func getSegments() []RAWROW {
 	rows, _ := a.DB.Query("SELECT * FROM segments")
 	defer rows.Close()
-	var result []M
+	var result []RAWROW
 
 	for rows.Next() {
 		var (
@@ -109,7 +99,7 @@ func getSegments() []M {
 		)
 		rows.Scan(&id, &name)
 
-		row := make(M)
+		row := make(RAWROW)
 		row["name"] = name
 		row["id"] = id
 		result = append(result, row)

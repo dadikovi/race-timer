@@ -2,6 +2,8 @@ package main
 
 import (
 	"log"
+	"net/http"
+	"net/http/httptest"
 	"os"
 	"testing"
 )
@@ -27,14 +29,34 @@ func ensureTableExists() {
 }
 
 func clearTable() {
-	a.DB.Exec("DELETE FROM segments")
-	a.DB.Exec("ALTER SEQUENCE segments_id_seq RESTART WITH 1")
+	if _, err := a.DB.Exec("DELETE FROM participants"); err != nil {
+		log.Fatal(err)
+	}
+	if _, err := a.DB.Exec("ALTER SEQUENCE participants_id_seq RESTART WITH 1"); err != nil {
+		log.Fatal(err)
+	}
+	if _, err := a.DB.Exec("DELETE FROM groups"); err != nil {
+		log.Fatal(err)
+	}
+	if _, err := a.DB.Exec("ALTER SEQUENCE groups_id_seq RESTART WITH 1"); err != nil {
+		log.Fatal(err)
+	}
+	if _, err := a.DB.Exec("DELETE FROM segments"); err != nil {
+		log.Fatal(err)
+	}
+	if _, err := a.DB.Exec("ALTER SEQUENCE segments_id_seq RESTART WITH 1"); err != nil {
+		log.Fatal(err)
+	}
+	if _, err := a.DB.Exec("DELETE FROM races"); err != nil {
+		log.Fatal(err)
+	}
+}
 
-	a.DB.Exec("DELETE FROM groups")
-	a.DB.Exec("ALTER SEQUENCE groups_id_seq RESTART WITH 1")
+func executeRequest(req *http.Request) *httptest.ResponseRecorder {
+	rr := httptest.NewRecorder()
+	a.Router.ServeHTTP(rr, req)
 
-	a.DB.Exec("DELETE FROM participants")
-	a.DB.Exec("ALTER SEQUENCE participants_id_seq RESTART WITH 1")
+	return rr
 }
 
 const tableCreationQuery = `
@@ -48,9 +70,8 @@ CREATE TABLE IF NOT EXISTS segments
 CREATE TABLE IF NOT EXISTS groups
 (
     id SERIAL,
-    name TEXT NOT NULL,
 	start TIMESTAMP,
-	segment_id SERIAL,
+	segment_id INTEGER,
 	CONSTRAINT group_segment FOREIGN KEY(segment_id) REFERENCES segments(id),
     CONSTRAINT groups_pkey PRIMARY KEY (id)
 );
@@ -59,8 +80,15 @@ CREATE TABLE IF NOT EXISTS participants
 (
     id SERIAL,
 	finish TIMESTAMP,
-	group_id SERIAL,
+	group_id INTEGER,
+	race_time INTEGER,
 	CONSTRAINT participant_group FOREIGN KEY(group_id) REFERENCES groups(id),
     CONSTRAINT participants_key PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS races
+(
+	active_group_id INTEGER,
+	CONSTRAINT active_group FOREIGN KEY(active_group_id) REFERENCES groups(id)
 );
 `

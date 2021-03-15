@@ -27,6 +27,15 @@ func MakeSegment(jsonRepresentation string) (Segment, error) {
 	return segment, nil
 }
 
+func FetchSegmentById(db *sql.DB, id int64) (Segment, error) {
+	var segment = Segment{}
+
+	if err := db.QueryRow("SELECT id, name FROM segments WHERE id = $1", id).Scan(&segment.id, &segment.name); err != nil {
+		return segment, err
+	}
+	return segment, nil
+}
+
 func FetchAll(db *sql.DB) ([]Segment, error) {
 	var result []Segment
 	var rows, err = db.Query("SELECT id, name FROM segments")
@@ -68,11 +77,11 @@ func (s *Segment) ToJson() ([]byte, error) {
 
 func (s *Segment) Save(db *sql.DB) error {
 	err := db.QueryRow(
-		"INSERT INTO segments(name) VALUES($1) RETURNING id",
+		"INSERT INTO segments(id, name) VALUES(DEFAULT, $1) RETURNING id",
 		s.name).Scan(&s.id)
 
 	if err != nil {
-		log.Fatal("Could not save segment ", s, err)
+		log.Print("Could not save segment ", s, err)
 		return err
 	}
 
