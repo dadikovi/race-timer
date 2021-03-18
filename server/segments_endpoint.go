@@ -47,13 +47,3 @@ func (a *App) createSegment(w http.ResponseWriter, r *http.Request) {
 	var json, _ = s.ToJson()
 	respondWithJSON(w, http.StatusCreated, json)
 }
-
-func respondWithError(w http.ResponseWriter, code int, message string) {
-	respondWithJSON(w, code, []byte(`{"error": `+message+`}`))
-}
-
-func respondWithJSON(w http.ResponseWriter, code int, payload []byte) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(code)
-	w.Write(payload)
-}
