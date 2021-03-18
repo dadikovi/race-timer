@@ -40,6 +40,9 @@ func (a *App) createSegment(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := s.Save(a.DB); err != nil {
+		if err.Error() == core.ALREADY_EXISTS_ERROR_CODE {
+			respondWithError(w, http.StatusBadRequest, err.Error())
+		}
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
