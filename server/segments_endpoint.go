@@ -1,18 +1,15 @@
 package main
 
 import (
-	"database/sql"
 	"io/ioutil"
 	"net/http"
 
 	"github.com/dadikovi/race-timer/server/core"
 )
 
-type SegmentEndpoint struct{}
-
-func (se *SegmentEndpoint) fetchAll(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func (a *App) fetchAllSegment(w http.ResponseWriter, r *http.Request) {
 	var json = "["
-	var segments, err = core.FetchAll(db)
+	var segments, err = core.FetchAll(a.DB)
 
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, err.Error())
@@ -28,7 +25,7 @@ func (se *SegmentEndpoint) fetchAll(w http.ResponseWriter, r *http.Request, db *
 	respondWithJSON(w, http.StatusOK, []byte(json))
 }
 
-func (se *SegmentEndpoint) create(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func (a *App) createSegment(w http.ResponseWriter, r *http.Request) {
 	var body, bodyReadError = ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 
@@ -42,7 +39,7 @@ func (se *SegmentEndpoint) create(w http.ResponseWriter, r *http.Request, db *sq
 		respondWithError(w, http.StatusBadRequest, err.Error())
 	}
 
-	if err := s.Save(db); err != nil {
+	if err := s.Save(a.DB); err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}

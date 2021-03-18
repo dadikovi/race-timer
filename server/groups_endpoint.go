@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
@@ -9,13 +8,11 @@ import (
 	"github.com/dadikovi/race-timer/server/core"
 )
 
-type GroupEndpoint struct{}
-
 type createGroupRequest struct {
 	SegmentId int64 `json:"segmentId"`
 }
 
-func (se *GroupEndpoint) create(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func (a *App) createGroup(w http.ResponseWriter, r *http.Request) {
 	var body, bodyReadError = ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 
@@ -28,23 +25,23 @@ func (se *GroupEndpoint) create(w http.ResponseWriter, r *http.Request, db *sql.
 		respondWithError(w, http.StatusBadRequest, err.Error())
 	}
 
-	var s, fetchSegmentErr = core.FetchSegmentById(db, request.SegmentId)
+	var s, fetchSegmentErr = core.FetchSegmentById(a.DB, request.SegmentId)
 	if fetchSegmentErr != nil {
 		respondWithError(w, http.StatusBadRequest, fetchSegmentErr.Error())
 	}
 
 	var group = core.MakeGroupForSegment(s)
-	var savedGroup, groupSaveErr = group.Save(db)
+	var savedGroup, groupSaveErr = group.Save(a.DB)
 	if groupSaveErr != nil {
 		respondWithError(w, http.StatusBadRequest, groupSaveErr.Error())
 	}
 
-	var race, getRaceErr = core.GetRaceInstance(db)
+	var race, getRaceErr = core.GetRaceInstance(a.DB)
 	if getRaceErr != nil {
 		respondWithError(w, http.StatusInternalServerError, getRaceErr.Error())
 	}
 
-	var _, setActiveGroupErr = race.SetActiveGroup(db, savedGroup)
+	var _, setActiveGroupErr = race.SetActiveGroup(a.DB, savedGroup)
 	if setActiveGroupErr != nil {
 		respondWithError(w, http.StatusInternalServerError, setActiveGroupErr.Error())
 	}

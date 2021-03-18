@@ -36,27 +36,8 @@ func (a *App) Run(addr string) {
 }
 
 func (a *App) initializeRoutes() {
-	a.Router.HandleFunc("/segments", a.createSegmentMiddleware).Methods("POST")
-	a.Router.HandleFunc("/segments", a.fetchAllSegmentMiddleware).Methods("GET")
-	a.Router.HandleFunc("/groups", a.createGroupMiddleware).Methods("POST")
-	a.Router.HandleFunc("/participants", a.createParticipantMiddleware).Methods("POST")
-}
-
-func (a *App) createSegmentMiddleware(w http.ResponseWriter, r *http.Request) {
-	var segmentEndpoint SegmentEndpoint
-	segmentEndpoint.create(w, r, a.DB)
-}
-
-func (a *App) fetchAllSegmentMiddleware(w http.ResponseWriter, r *http.Request) {
-	var segmentEndpoint SegmentEndpoint
-	segmentEndpoint.fetchAll(w, r, a.DB)
-}
-
-func (a *App) createGroupMiddleware(w http.ResponseWriter, r *http.Request) {
-	var groupEndpoint GroupEndpoint
-	groupEndpoint.create(w, r, a.DB)
-}
-
-func (a *App) createParticipantMiddleware(w http.ResponseWriter, r *http.Request) {
-	registerParticipant(w, r, a.DB)
+	a.Router.HandleFunc("/segments", a.createSegment).Methods("POST")
+	a.Router.HandleFunc("/segments", a.fetchAllSegment).Methods("GET")
+	a.Router.HandleFunc("/groups", a.createGroup).Methods("POST")
+	a.Router.HandleFunc("/participants", a.registerParticipant).Methods("POST")
 }
