@@ -31,6 +31,10 @@ func GetRaceInstance(db *sql.DB) (Race, error) {
 	return instance, nil
 }
 
+func (r Race) GetActiveGroup() Group {
+	return r.activeGroup
+}
+
 func (r Race) SetActiveGroup(db *sql.DB, group Group) (Race, error) {
 	if _, err := db.Exec(`UPDATE races SET active_group_id = $1`, group.id); err != nil {
 		return r, err
