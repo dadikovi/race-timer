@@ -38,6 +38,28 @@ func TestPostSegmentsWithValidData(t *testing.T) {
 	assert.Equal(t, int64(1), segmentsFromDatabase[0]["id"])
 }
 
+func TestPostSegmentsWithExistingName(t *testing.T) {
+	// given
+	clearTable()
+	segmentName := "some-new-segment"
+	createSegment(segmentName)
+
+	req, _ := http.NewRequest("POST", "/segments", bytes.NewBufferString(`{"name": "`+segmentName+`"}`))
+	req.Header.Set("Content-Type", "application/json")
+
+	// when we call the endpoint
+	response := executeRequest(req)
+
+	// then it returns the newly created element
+	assert.Equal(t, http.StatusBadRequest, response.Code)
+
+	// when we get all the segments from the database
+	segmentsFromDatabase := getSegments()
+
+	// then
+	assert.Equal(t, len(segmentsFromDatabase), 1, "One record should be in the database")
+}
+
 func TestGetSegmentsWithExistingData(t *testing.T) {
 	// given
 	clearTable()

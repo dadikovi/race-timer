@@ -59,28 +59,25 @@ func executeRequest(req *http.Request) *httptest.ResponseRecorder {
 const tableCreationQuery = `
 CREATE TABLE IF NOT EXISTS segments
 (
-    id SERIAL,
-    name TEXT NOT NULL,
-    CONSTRAINT segments_pkey PRIMARY KEY (id)
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL UNIQUE
 );
 
 CREATE TABLE IF NOT EXISTS groups
 (
-    id SERIAL,
+    id SERIAL PRIMARY KEY,
 	start TIMESTAMP,
 	segment_id INTEGER,
-	CONSTRAINT group_segment FOREIGN KEY(segment_id) REFERENCES segments(id),
-    CONSTRAINT groups_pkey PRIMARY KEY (id)
+	CONSTRAINT group_segment FOREIGN KEY(segment_id) REFERENCES segments(id)
 );
 
 CREATE TABLE IF NOT EXISTS participants
 (
-    start_number INTEGER,
+    start_number INTEGER PRIMARY KEY,
 	finish TIMESTAMP,
 	group_id INTEGER,
 	race_time INTEGER,
-	CONSTRAINT participant_group FOREIGN KEY(group_id) REFERENCES groups(id),
-    CONSTRAINT participants_key PRIMARY KEY (start_number)
+	CONSTRAINT participant_group FOREIGN KEY(group_id) REFERENCES groups(id)
 );
 
 CREATE TABLE IF NOT EXISTS races
@@ -89,3 +86,13 @@ CREATE TABLE IF NOT EXISTS races
 	CONSTRAINT active_group FOREIGN KEY(active_group_id) REFERENCES groups(id)
 );
 `
+
+func respondWithError(w http.ResponseWriter, code int, message string) {
+	respondWithJSON(w, code, []byte(`{"error": `+message+`}`))
+}
+
+func respondWithJSON(w http.ResponseWriter, code int, payload []byte) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(code)
+	w.Write(payload)
+}

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
@@ -14,7 +13,7 @@ type registerParticipantRequest struct {
 	GroupId     int64 `json:"groupId"`
 }
 
-func registerParticipant(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func (a *App) registerParticipant(w http.ResponseWriter, r *http.Request) {
 	var body, bodyReadError = ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 
@@ -27,12 +26,12 @@ func registerParticipant(w http.ResponseWriter, r *http.Request, db *sql.DB) {
 		respondWithError(w, http.StatusBadRequest, err.Error())
 	}
 
-	var race, getRaceErr = core.GetRaceInstance(db)
+	var race, getRaceErr = core.GetRaceInstance(a.DB)
 	if getRaceErr != nil {
 		respondWithError(w, http.StatusInternalServerError, getRaceErr.Error())
 	}
 
-	var createdParticipant, saveParticipantErr = core.MakeParticipantForGroup(request.StartNumber, race.GetActiveGroup()).Save(db)
+	var createdParticipant, saveParticipantErr = core.MakeParticipantForGroup(request.StartNumber, race.GetActiveGroup()).Save(a.DB)
 	if saveParticipantErr != nil {
 		respondWithError(w, http.StatusInternalServerError, getRaceErr.Error())
 	}

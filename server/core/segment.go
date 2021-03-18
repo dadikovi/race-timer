@@ -3,7 +3,9 @@ package core
 import (
 	"database/sql"
 	"encoding/json"
+	"errors"
 	"log"
+	"strings"
 )
 
 type Segment struct {
@@ -15,6 +17,8 @@ type segmentDto struct {
 	Id   int64  `json:"id"`
 	Name string `json:"name"`
 }
+
+var ALREADY_EXISTS_ERROR_CODE = "ALREADY_EXISTS"
 
 func MakeSegment(jsonRepresentation string) (Segment, error) {
 	var segment Segment
@@ -81,6 +85,10 @@ func (s *Segment) Save(db *sql.DB) error {
 		s.name).Scan(&s.id)
 
 	if err != nil {
+		if strings.Contains(err.Error(), "segments_name_key") {
+			return errors.New(ALREADY_EXISTS_ERROR_CODE)
+		}
+
 		log.Print("Could not save segment ", s, err)
 		return err
 	}

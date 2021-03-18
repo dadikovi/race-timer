@@ -1,18 +1,15 @@
 package main
 
 import (
-	"database/sql"
 	"io/ioutil"
 	"net/http"
 
 	"github.com/dadikovi/race-timer/server/core"
 )
 
-type SegmentEndpoint struct{}
-
-func (se *SegmentEndpoint) fetchAll(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func (a *App) fetchAllSegment(w http.ResponseWriter, r *http.Request) {
 	var json = "["
-	var segments, err = core.FetchAll(db)
+	var segments, err = core.FetchAll(a.DB)
 
 	if err != nil {
 		respondWithError(w, http.StatusBadRequest, err.Error())
@@ -28,7 +25,7 @@ func (se *SegmentEndpoint) fetchAll(w http.ResponseWriter, r *http.Request, db *
 	respondWithJSON(w, http.StatusOK, []byte(json))
 }
 
-func (se *SegmentEndpoint) create(w http.ResponseWriter, r *http.Request, db *sql.DB) {
+func (a *App) createSegment(w http.ResponseWriter, r *http.Request) {
 	var body, bodyReadError = ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 
@@ -42,21 +39,14 @@ func (se *SegmentEndpoint) create(w http.ResponseWriter, r *http.Request, db *sq
 		respondWithError(w, http.StatusBadRequest, err.Error())
 	}
 
-	if err := s.Save(db); err != nil {
+	if err := s.Save(a.DB); err != nil {
+		if err.Error() == core.ALREADY_EXISTS_ERROR_CODE {
+			respondWithError(w, http.StatusBadRequest, err.Error())
+		}
 		respondWithError(w, http.StatusInternalServerError, err.Error())
 		return
 	}
 
 	var json, _ = s.ToJson()
 	respondWithJSON(w, http.StatusCreated, json)
-}
-
-func respondWithError(w http.ResponseWriter, code int, message string) {
-	respondWithJSON(w, code, []byte(`{"error": `+message+`}`))
-}
-
-func respondWithJSON(w http.ResponseWriter, code int, payload []byte) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(code)
-	w.Write(payload)
 }
