@@ -35,6 +35,9 @@ func clearTable() {
 	if _, err := a.DB.Exec("ALTER SEQUENCE participants_id_seq RESTART WITH 1"); err != nil {
 		log.Fatal(err)
 	}
+	if _, err := a.DB.Exec("DELETE FROM races"); err != nil {
+		log.Fatal(err)
+	}
 	if _, err := a.DB.Exec("DELETE FROM groups"); err != nil {
 		log.Fatal(err)
 	}
@@ -45,9 +48,6 @@ func clearTable() {
 		log.Fatal(err)
 	}
 	if _, err := a.DB.Exec("ALTER SEQUENCE segments_id_seq RESTART WITH 1"); err != nil {
-		log.Fatal(err)
-	}
-	if _, err := a.DB.Exec("DELETE FROM races"); err != nil {
 		log.Fatal(err)
 	}
 }
@@ -78,12 +78,12 @@ CREATE TABLE IF NOT EXISTS groups
 
 CREATE TABLE IF NOT EXISTS participants
 (
-    id SERIAL,
+    start_number INTEGER,
 	finish TIMESTAMP,
 	group_id INTEGER,
 	race_time INTEGER,
 	CONSTRAINT participant_group FOREIGN KEY(group_id) REFERENCES groups(id),
-    CONSTRAINT participants_key PRIMARY KEY (id)
+    CONSTRAINT participants_key PRIMARY KEY (start_number)
 );
 
 CREATE TABLE IF NOT EXISTS races

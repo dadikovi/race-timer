@@ -1,6 +1,9 @@
 package core
 
-import "database/sql"
+import (
+	"database/sql"
+	"log"
+)
 
 type Race struct {
 	activeGroup Group
@@ -11,10 +14,9 @@ func GetRaceInstance(db *sql.DB) (Race, error) {
 	var activeGroupId int64
 
 	if err := db.QueryRow("SELECT active_group_id FROM races").Scan(&activeGroupId); err != nil {
-		var defaultActiveGroupId int64 // Only for checking the save result
 		if err := db.QueryRow(
-			"INSERT INTO races(active_group_id) VALUES($1) RETURNING active_group_id",
-			0).Scan(&defaultActiveGroupId); err != nil {
+			"INSERT INTO races(active_group_id) VALUES(NULL) RETURNING active_group_id").Err(); err != nil {
+			log.Panic(err)
 			return instance, err
 		}
 
