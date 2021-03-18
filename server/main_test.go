@@ -29,10 +29,7 @@ func ensureTableExists() {
 }
 
 func clearTable() {
-	if _, err := a.DB.Exec("DELETE FROM participants"); err != nil {
-		log.Fatal(err)
-	}
-	if _, err := a.DB.Exec("ALTER SEQUENCE participants_id_seq RESTART WITH 1"); err != nil {
+	if _, err := a.DB.Exec("DELETE FROM participants;"); err != nil {
 		log.Fatal(err)
 	}
 	if _, err := a.DB.Exec("DELETE FROM races"); err != nil {

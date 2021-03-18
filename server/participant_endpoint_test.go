@@ -28,7 +28,7 @@ func TestPostParticipantsWithValidData(t *testing.T) {
 	executeRequest(groupReq)
 	groupId := 1
 
-	req, _ := http.NewRequest("POST", "/participants", bytes.NewBufferString(`{"groupId": `+fmt.Sprint(groupId)+`, "startNumber:" `+fmt.Sprint(startNumber)+`}`))
+	req, _ := http.NewRequest("POST", "/participants", bytes.NewBufferString(`{"groupId": `+fmt.Sprint(groupId)+`, "startNumber": `+fmt.Sprint(startNumber)+`}`))
 	req.Header.Set("Content-Type", "application/json")
 
 	// when we call the endpoint
