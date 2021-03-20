@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -49,7 +50,7 @@ func TestPostGroupsWithValidData(t *testing.T) {
 }
 
 func getGroups() []RAWROW {
-	rows, _ := a.DB.Query("SELECT id, segment_id FROM groups")
+	rows, _ := a.DB.Query("SELECT id, segment_id, start FROM groups")
 	defer rows.Close()
 	var result []RAWROW
 
@@ -57,6 +58,7 @@ func getGroups() []RAWROW {
 		var (
 			id         int64
 			segment_id int64
+			start      time.Time
 		)
 		rows.Scan(&id, &segment_id)
 
@@ -65,6 +67,7 @@ func getGroups() []RAWROW {
 		row := make(RAWROW)
 		row["segment_id"] = segment_id
 		row["id"] = id
+		row["start"] = start
 		result = append(result, row)
 	}
 
