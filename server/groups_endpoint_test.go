@@ -46,7 +46,7 @@ func TestPostGroupsWithValidData(t *testing.T) {
 	assert.Equal(t, int64(expectedGroupId), groupsFromDatabase[0].id)
 
 	assert.Equal(t, len(racesFromDatabase), 1, "One record should be in the database")
-	assert.Equal(t, int64(expectedGroupId), racesFromDatabase[0]["active_group_id"])
+	assert.Equal(t, int64(expectedGroupId), racesFromDatabase[0].activeGroupId)
 }
 
 type GroupDao struct {
@@ -64,25 +64,6 @@ func getGroups() []GroupDao {
 	for rows.Next() {
 		var row GroupDao = GroupDao{}
 		rows.Scan(&row.id, &row.segmentId, &row.start)
-		result = append(result, row)
-	}
-
-	return result
-}
-
-func getRaces() []RAWROW {
-	rows, _ := a.DB.Query("SELECT active_group_id FROM races")
-	defer rows.Close()
-	var result []RAWROW
-
-	for rows.Next() {
-		var (
-			active_group_id int64
-		)
-		rows.Scan(&active_group_id)
-
-		row := make(RAWROW)
-		row["active_group_id"] = active_group_id
 		result = append(result, row)
 	}
 

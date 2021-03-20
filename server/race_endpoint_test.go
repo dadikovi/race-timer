@@ -39,3 +39,21 @@ func TestStartActiveGroup(t *testing.T) {
 	assert.Equal(t, len(groupsFromDatabase), 1, "One record should be in the database")
 	assert.True(t, time.Now().Sub(groupsFromDatabase[0].start) < 1000)
 }
+
+type RaceDao struct {
+	activeGroupId int64
+}
+
+func getRaces() []RaceDao {
+	rows, _ := a.DB.Query("SELECT active_group_id FROM races")
+	defer rows.Close()
+	var result []RaceDao
+
+	for rows.Next() {
+		var row = RaceDao{}
+		rows.Scan(&row.activeGroupId)
+		result = append(result, row)
+	}
+
+	return result
+}
