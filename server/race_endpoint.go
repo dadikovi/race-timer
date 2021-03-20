@@ -8,14 +8,11 @@ import (
 
 func (a *App) startActiveGroup(w http.ResponseWriter, r *http.Request) {
 
-	var race, getRaceErr = core.GetRaceInstance(a.DB)
-	if getRaceErr != nil {
-		respondWithError(w, http.StatusInternalServerError, getRaceErr.Error())
-	}
+	race, err := core.GetRaceInstance(a.DB)
+	respondWithServerError(w, err)
 
-	if err := race.GetActiveGroup().StartGroup(a.DB); err != nil {
-		respondWithError(w, http.StatusInternalServerError, err.Error())
-	}
+	err = race.GetActiveGroup().StartGroup(a.DB)
+	respondWithServerError(w, err)
 
 	respondWithJSON(w, http.StatusOK, []byte(""))
 }

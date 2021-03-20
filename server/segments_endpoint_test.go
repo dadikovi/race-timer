@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/dadikovi/race-timer/server/core"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -24,7 +25,7 @@ func TestPostSegmentsWithValidData(t *testing.T) {
 	json.Unmarshal([]byte(response.Body.String()), &responseBody)
 
 	// then it returns the newly created element
-	assert.Equal(t, http.StatusCreated, response.Code, "Response code should be 200/OK")
+	assert.Equal(t, http.StatusOK, response.Code, "Response code should be 200/OK")
 	assert.NotNil(t, responseBody)
 	assert.Equal(t, segmentName, responseBody["name"], "Should return the given segment name")
 	assert.Equal(t, 1, int(responseBody["id"].(float64)))
@@ -34,8 +35,8 @@ func TestPostSegmentsWithValidData(t *testing.T) {
 
 	// then there will be only our newly created element in it
 	assert.Equal(t, len(segmentsFromDatabase), 1, "One record should be in the database")
-	assert.Equal(t, segmentName, segmentsFromDatabase[0]["name"])
-	assert.Equal(t, int64(1), segmentsFromDatabase[0]["id"])
+	assert.Equal(t, segmentName, segmentsFromDatabase[0].Name)
+	assert.Equal(t, int64(1), segmentsFromDatabase[0].Id)
 }
 
 func TestPostSegmentsWithExistingName(t *testing.T) {
@@ -67,7 +68,7 @@ func TestGetSegmentsWithExistingData(t *testing.T) {
 	segmentName := "some-new-segment"
 	createSegment(segmentName)
 
-	var responseBody []RAWROW
+	var responseBody []core.SegmentDto
 
 	req, _ := http.NewRequest("GET", "/segments", nil)
 	req.Header.Set("Content-Type", "application/json")
@@ -79,15 +80,15 @@ func TestGetSegmentsWithExistingData(t *testing.T) {
 	// then it returns the saved element
 	assert.Equal(t, http.StatusOK, response.Code, "Response code should be 200/OK")
 	assert.NotNil(t, responseBody)
-	assert.Equal(t, segmentName, responseBody[0]["name"], "Should return the given segment name")
-	assert.Equal(t, 1, int(responseBody[0]["id"].(float64)))
+	assert.Equal(t, segmentName, responseBody[0].Name, "Should return the given segment name")
+	assert.Equal(t, 1, int(responseBody[0].Id))
 }
 
 func TestGetSegmentsWithEmptyDatabase(t *testing.T) {
 	// given
 	clearTable()
 
-	var responseBody []RAWROW
+	var responseBody []core.SegmentDto
 
 	req, _ := http.NewRequest("GET", "/segments", nil)
 	req.Header.Set("Content-Type", "application/json")
@@ -98,8 +99,7 @@ func TestGetSegmentsWithEmptyDatabase(t *testing.T) {
 
 	// then it returns the saved element
 	assert.Equal(t, http.StatusOK, response.Code, "Response code should be 200/OK")
-	assert.NotNil(t, responseBody)
-	assert.Equal(t, 0, len(responseBody))
+	assert.Nil(t, responseBody)
 }
 
 func createSegment(segmentName string) {
@@ -109,21 +109,14 @@ func createSegment(segmentName string) {
 
 }
 
-func getSegments() []RAWROW {
+func getSegments() []core.SegmentDto {
 	rows, _ := a.DB.Query("SELECT * FROM segments")
 	defer rows.Close()
-	var result []RAWROW
+	var result []core.SegmentDto
 
 	for rows.Next() {
-		var (
-			id   int64
-			name string
-		)
-		rows.Scan(&id, &name)
-
-		row := make(RAWROW)
-		row["name"] = name
-		row["id"] = id
+		var row = core.SegmentDto{}
+		rows.Scan(&row.Id, &row.Name)
 		result = append(result, row)
 	}
 

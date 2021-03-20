@@ -1,8 +1,6 @@
 package main
 
 import (
-	"encoding/json"
-	"io/ioutil"
 	"net/http"
 
 	"github.com/dadikovi/race-timer/server/core"
@@ -14,32 +12,15 @@ type registerParticipantRequest struct {
 }
 
 func (a *App) registerParticipant(w http.ResponseWriter, r *http.Request) {
-	var body, bodyReadError = ioutil.ReadAll(r.Body)
-	defer r.Body.Close()
-
-	if bodyReadError != nil {
-		respondWithError(w, http.StatusBadRequest, bodyReadError.Error())
-	}
 
 	var request registerParticipantRequest
-	if err := json.Unmarshal(body, &request); err != nil {
-		respondWithError(w, http.StatusBadRequest, err.Error())
-	}
+	parseRequestBody(w, r, &request)
 
-	var race, getRaceErr = core.GetRaceInstance(a.DB)
-	if getRaceErr != nil {
-		respondWithError(w, http.StatusInternalServerError, getRaceErr.Error())
-	}
+	race, err := core.GetRaceInstance(a.DB)
+	respondWithServerError(w, err)
 
-	var createdParticipant, saveParticipantErr = core.MakeParticipantForGroup(request.StartNumber, race.GetActiveGroup()).Save(a.DB)
-	if saveParticipantErr != nil {
-		respondWithError(w, http.StatusInternalServerError, getRaceErr.Error())
-	}
+	createdParticipant, err := core.MakeParticipantForGroup(request.StartNumber, race.GetActiveGroup()).Save(a.DB)
+	respondWithServerError(w, err)
 
-	var result, resultErr = createdParticipant.ToJson()
-	if resultErr != nil {
-		respondWithError(w, http.StatusInternalServerError, resultErr.Error())
-	}
-
-	respondWithJSON(w, http.StatusOK, result)
+	respondWithDto(w, createdParticipant.Dto())
 }

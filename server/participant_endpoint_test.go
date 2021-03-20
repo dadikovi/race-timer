@@ -49,9 +49,9 @@ func TestPostParticipantsWithValidData(t *testing.T) {
 
 	// then there will be only our newly created element in it
 	assert.Equal(t, len(participantsFromDatabase), 1, "One record should be in the database")
-	assert.Equal(t, int64(groupId), participantsFromDatabase[0]["group_id"])
-	assert.Equal(t, int64(startNumber), participantsFromDatabase[0]["start_number"])
-	assert.Equal(t, int64(-1), participantsFromDatabase[0]["race_time"])
+	assert.Equal(t, int64(groupId), participantsFromDatabase[0].groupId)
+	assert.Equal(t, int64(startNumber), participantsFromDatabase[0].startNumber)
+	assert.Equal(t, int64(-1), participantsFromDatabase[0].raceTime)
 }
 
 func createGroup(segmentId int) {
@@ -60,23 +60,20 @@ func createGroup(segmentId int) {
 	}
 }
 
-func getParticipants() []RAWROW {
+type ParticipantDao struct {
+	groupId     int64
+	startNumber int64
+	raceTime    int64
+}
+
+func getParticipants() []ParticipantDao {
 	rows, _ := a.DB.Query("SELECT group_id, start_number, race_time FROM participants")
 	defer rows.Close()
-	var result []RAWROW
+	var result []ParticipantDao
 
 	for rows.Next() {
-		var (
-			groupId     int64
-			startNumber int64
-			raceTime    int64
-		)
-		rows.Scan(&groupId, &startNumber, &raceTime)
-
-		row := make(RAWROW)
-		row["group_id"] = groupId
-		row["start_number"] = startNumber
-		row["race_time"] = raceTime
+		var row = ParticipantDao{}
+		rows.Scan(&row.groupId, &row.startNumber, &row.raceTime)
 		result = append(result, row)
 	}
 
