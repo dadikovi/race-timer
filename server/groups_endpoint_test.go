@@ -37,8 +37,8 @@ func TestPostGroupsWithValidData(t *testing.T) {
 	assert.Equal(t, expectedGroupId, int(responseBody["id"].(float64)))
 
 	// when we get all the segments from the database
-	groupsFromDatabase := getGroups()
-	racesFromDatabase := getRaces()
+	groupsFromDatabase := getGroupsFromDatabase()
+	racesFromDatabase := getRacesFromDatabase()
 
 	// then there will be only our newly created element in it
 	assert.Equal(t, len(groupsFromDatabase), 1, "One record should be in the database")
@@ -55,7 +55,7 @@ type GroupDao struct {
 	start     time.Time
 }
 
-func getGroups() []GroupDao {
+func getGroupsFromDatabase() []GroupDao {
 
 	rows, _ := a.DB.Query("SELECT id, segment_id, start FROM groups")
 	defer rows.Close()

@@ -33,7 +33,7 @@ func TestStartActiveGroup(t *testing.T) {
 	assert.Equal(t, http.StatusOK, response.Code, "Response code should be 200/OK")
 
 	// when we get all the groups from the database
-	groupsFromDatabase := getGroups()
+	groupsFromDatabase := getGroupsFromDatabase()
 
 	// then there will be only our newly created element in it
 	assert.Equal(t, len(groupsFromDatabase), 1, "One record should be in the database")
@@ -44,7 +44,7 @@ type RaceDao struct {
 	activeGroupId int64
 }
 
-func getRaces() []RaceDao {
+func getRacesFromDatabase() []RaceDao {
 	rows, _ := a.DB.Query("SELECT active_group_id FROM races")
 	defer rows.Close()
 	var result []RaceDao
