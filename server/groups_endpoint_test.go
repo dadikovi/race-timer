@@ -42,32 +42,28 @@ func TestPostGroupsWithValidData(t *testing.T) {
 
 	// then there will be only our newly created element in it
 	assert.Equal(t, len(groupsFromDatabase), 1, "One record should be in the database")
-	assert.Equal(t, int64(segmentId), groupsFromDatabase[0]["segment_id"])
-	assert.Equal(t, int64(expectedGroupId), groupsFromDatabase[0]["id"])
+	assert.Equal(t, int64(segmentId), groupsFromDatabase[0].segmentId)
+	assert.Equal(t, int64(expectedGroupId), groupsFromDatabase[0].id)
 
 	assert.Equal(t, len(racesFromDatabase), 1, "One record should be in the database")
 	assert.Equal(t, int64(expectedGroupId), racesFromDatabase[0]["active_group_id"])
 }
 
-func getGroups() []RAWROW {
+type GroupDao struct {
+	id        int64
+	segmentId int64
+	start     time.Time
+}
+
+func getGroups() []GroupDao {
+
 	rows, _ := a.DB.Query("SELECT id, segment_id, start FROM groups")
 	defer rows.Close()
-	var result []RAWROW
+	var result []GroupDao
 
 	for rows.Next() {
-		var (
-			id         int64
-			segment_id int64
-			start      time.Time
-		)
-		rows.Scan(&id, &segment_id)
-
-		log.Print("FOUND ROW, YO", id, segment_id)
-
-		row := make(RAWROW)
-		row["segment_id"] = segment_id
-		row["id"] = id
-		row["start"] = start
+		var row GroupDao = GroupDao{}
+		rows.Scan(&row.id, &row.segmentId, &row.start)
 		result = append(result, row)
 	}
 

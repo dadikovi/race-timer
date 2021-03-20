@@ -37,5 +37,5 @@ func TestStartActiveGroup(t *testing.T) {
 
 	// then there will be only our newly created element in it
 	assert.Equal(t, len(groupsFromDatabase), 1, "One record should be in the database")
-	assert.True(t, time.Now().Sub(groupsFromDatabase[0]["start"]) < 1000)
+	assert.True(t, time.Now().Sub(groupsFromDatabase[0].start) < 1000)
 }
