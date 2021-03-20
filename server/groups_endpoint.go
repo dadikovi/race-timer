@@ -6,13 +6,13 @@ import (
 	"github.com/dadikovi/race-timer/server/core"
 )
 
-type CreateGroupRequest struct {
+type createGroupRequest struct {
 	SegmentId int64 `json:"segmentId"`
 }
 
 func (a *App) createGroup(w http.ResponseWriter, r *http.Request) {
 
-	var request CreateGroupRequest
+	var request createGroupRequest
 	parseRequestBody(w, r, &request)
 
 	s, err := core.FetchSegmentById(a.DB, request.SegmentId)

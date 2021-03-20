@@ -2,7 +2,6 @@ package core
 
 import (
 	"database/sql"
-	"encoding/json"
 	"log"
 )
 
@@ -12,7 +11,7 @@ type Participant struct {
 	raceTimeMs  int64
 }
 
-type participantDto struct {
+type ParticipantDto struct {
 	StartNumber int64 `json:"startNumber"`
 	GroupId     int64 `json:"groupId"`
 	RaceTimeMs  int64 `json:"raceTimeMs"`
@@ -35,11 +34,6 @@ func (p Participant) Save(db *sql.DB) (Participant, error) {
 	return p, nil
 }
 
-func (p *Participant) ToJson() ([]byte, error) {
-	participantDto := participantDto{p.startNumber, p.group.id, p.raceTimeMs}
-	j, err := json.Marshal(participantDto)
-	if err != nil {
-		return nil, err
-	}
-	return j, nil
+func (p *Participant) Dto() ParticipantDto {
+	return ParticipantDto{p.startNumber, p.group.id, p.raceTimeMs}
 }
