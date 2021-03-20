@@ -13,7 +13,7 @@ type Segment struct {
 	name string
 }
 
-type segmentDto struct {
+type SegmentDto struct {
 	Id   int64  `json:"id"`
 	Name string `json:"name"`
 }
@@ -22,7 +22,7 @@ var ALREADY_EXISTS_ERROR_CODE = "ALREADY_EXISTS"
 
 func MakeSegment(jsonRepresentation string) (Segment, error) {
 	var segment Segment
-	var dto segmentDto
+	var dto SegmentDto
 	if err := json.Unmarshal([]byte(jsonRepresentation), &dto); err != nil {
 		return segment, err
 	}
@@ -71,7 +71,7 @@ func FetchAll(db *sql.DB) ([]Segment, error) {
 }
 
 func (s *Segment) ToJson() ([]byte, error) {
-	segmentDto := segmentDto{s.id, s.name}
+	segmentDto := SegmentDto{s.id, s.name}
 	j, err := json.Marshal(segmentDto)
 	if err != nil {
 		return nil, err
