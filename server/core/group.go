@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"log"
+	"time"
 )
 
 type Group struct {
@@ -49,6 +50,18 @@ func (g Group) Save(db *sql.DB) (Group, error) {
 	}
 
 	return g, nil
+}
+
+func (g Group) StartGroup(db *sql.DB) error {
+	res, err := db.Exec(
+		"UPDATE groups SET start = $1 WHERE id = $2",
+		time.Now(), g.id)
+
+	rows, _ := res.RowsAffected()
+
+	log.Print("Updated rows: ", rows)
+
+	return err
 }
 
 func (g *Group) ToJson() ([]byte, error) {

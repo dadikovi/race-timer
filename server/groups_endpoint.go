@@ -8,11 +8,12 @@ import (
 	"github.com/dadikovi/race-timer/server/core"
 )
 
-type createGroupRequest struct {
-	SegmentId int64 `json:"segmentId"`
-}
-
 func (a *App) createGroup(w http.ResponseWriter, r *http.Request) {
+
+	type createGroupRequest struct {
+		SegmentId int64 `json:"segmentId"`
+	}
+
 	var body, bodyReadError = ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 

@@ -15,8 +15,6 @@ type App struct {
 	DB     *sql.DB
 }
 
-type RAWROW map[string]interface{}
-
 func (a *App) Initialize(user, password, dbname string) {
 	connectionString :=
 		fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable", user, password, dbname)
@@ -39,5 +37,6 @@ func (a *App) initializeRoutes() {
 	a.Router.HandleFunc("/segments", a.createSegment).Methods("POST")
 	a.Router.HandleFunc("/segments", a.fetchAllSegment).Methods("GET")
 	a.Router.HandleFunc("/groups", a.createGroup).Methods("POST")
+	a.Router.HandleFunc("/groups/active", a.startActiveGroup).Methods("PUT")
 	a.Router.HandleFunc("/participants", a.registerParticipant).Methods("POST")
 }
