@@ -2,7 +2,6 @@ package core
 
 import (
 	"database/sql"
-	"encoding/json"
 	"errors"
 	"log"
 	"strings"
@@ -20,15 +19,8 @@ type SegmentDto struct {
 
 var ALREADY_EXISTS_ERROR_CODE = "ALREADY_EXISTS"
 
-func MakeSegment(jsonRepresentation string) (Segment, error) {
-	var segment Segment
-	var dto SegmentDto
-	if err := json.Unmarshal([]byte(jsonRepresentation), &dto); err != nil {
-		return segment, err
-	}
-
-	segment = Segment{dto.Id, dto.Name}
-	return segment, nil
+func MakeSegment(name string) Segment {
+	return Segment{0, name}
 }
 
 func FetchSegmentById(db *sql.DB, id int64) (Segment, error) {
@@ -70,28 +62,23 @@ func FetchAll(db *sql.DB) ([]Segment, error) {
 	return result, nil
 }
 
-func (s *Segment) ToJson() ([]byte, error) {
-	segmentDto := SegmentDto{s.id, s.name}
-	j, err := json.Marshal(segmentDto)
-	if err != nil {
-		return nil, err
-	}
-	return j, nil
-}
-
-func (s *Segment) Save(db *sql.DB) error {
+func (s Segment) Save(db *sql.DB) (Segment, error) {
 	err := db.QueryRow(
 		"INSERT INTO segments(id, name) VALUES(DEFAULT, $1) RETURNING id",
 		s.name).Scan(&s.id)
 
 	if err != nil {
 		if strings.Contains(err.Error(), "segments_name_key") {
-			return errors.New(ALREADY_EXISTS_ERROR_CODE)
+			return s, errors.New(ALREADY_EXISTS_ERROR_CODE)
 		}
 
 		log.Print("Could not save segment ", s, err)
-		return err
+		return s, err
 	}
 
-	return nil
+	return s, nil
+}
+
+func (s *Segment) Dto() SegmentDto {
+	return SegmentDto{s.id, s.name}
 }

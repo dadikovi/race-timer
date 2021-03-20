@@ -1,52 +1,39 @@
 package main
 
 import (
-	"io/ioutil"
 	"net/http"
 
 	"github.com/dadikovi/race-timer/server/core"
 )
 
 func (a *App) fetchAllSegment(w http.ResponseWriter, r *http.Request) {
-	var json = "["
-	var segments, err = core.FetchAll(a.DB)
 
-	if err != nil {
-		respondWithError(w, http.StatusBadRequest, err.Error())
-	}
+	segments, err := core.FetchAll(a.DB)
+	respondWithClientError(w, err)
 
+	var results []core.SegmentDto
 	for _, s := range segments {
-		sjson, _ := s.ToJson()
-		json = json + string(sjson)
+		results = append(results, s.Dto())
 	}
 
-	json = json + "]"
+	respondWithDto(w, results)
+}
 
-	respondWithJSON(w, http.StatusOK, []byte(json))
+type createSegmentRequest struct {
+	Name string `json:"name"`
 }
 
 func (a *App) createSegment(w http.ResponseWriter, r *http.Request) {
-	var body, bodyReadError = ioutil.ReadAll(r.Body)
-	defer r.Body.Close()
 
-	if bodyReadError != nil {
-		respondWithError(w, http.StatusBadRequest, bodyReadError.Error())
-	}
+	var request createSegmentRequest
+	parseRequestBody(w, r, &request)
 
-	var s, err = core.MakeSegment(string(body))
-
-	if err != nil {
-		respondWithError(w, http.StatusBadRequest, err.Error())
-	}
-
-	if err := s.Save(a.DB); err != nil {
+	if s, err := core.MakeSegment(request.Name).Save(a.DB); err != nil {
 		if err.Error() == core.ALREADY_EXISTS_ERROR_CODE {
-			respondWithError(w, http.StatusBadRequest, err.Error())
+			respondWithClientError(w, err)
 		}
-		respondWithError(w, http.StatusInternalServerError, err.Error())
-		return
+		respondWithServerError(w, err)
+	} else {
+		respondWithDto(w, s.Dto())
 	}
-
-	var json, _ = s.ToJson()
-	respondWithJSON(w, http.StatusCreated, json)
 }

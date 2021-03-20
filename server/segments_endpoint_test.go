@@ -25,7 +25,7 @@ func TestPostSegmentsWithValidData(t *testing.T) {
 	json.Unmarshal([]byte(response.Body.String()), &responseBody)
 
 	// then it returns the newly created element
-	assert.Equal(t, http.StatusCreated, response.Code, "Response code should be 200/OK")
+	assert.Equal(t, http.StatusOK, response.Code, "Response code should be 200/OK")
 	assert.NotNil(t, responseBody)
 	assert.Equal(t, segmentName, responseBody["name"], "Should return the given segment name")
 	assert.Equal(t, 1, int(responseBody["id"].(float64)))
@@ -99,8 +99,7 @@ func TestGetSegmentsWithEmptyDatabase(t *testing.T) {
 
 	// then it returns the saved element
 	assert.Equal(t, http.StatusOK, response.Code, "Response code should be 200/OK")
-	assert.NotNil(t, responseBody)
-	assert.Equal(t, 0, len(responseBody))
+	assert.Nil(t, responseBody)
 }
 
 func createSegment(segmentName string) {
