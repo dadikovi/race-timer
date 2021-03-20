@@ -24,7 +24,7 @@ func TestPostSegmentsWithValidData(t *testing.T) {
 	// then it returns the newly created element
 	assert.Equal(t, http.StatusOK, response.Code)
 	assert.Equal(t, segmentName, createdSegment.Name)
-	assert.Equal(t, 1, int(createdSegment.Id))
+	assert.Equal(t, 1, createdSegment.Id)
 
 	// when we get all the segments from the database
 	segmentsFromDatabase := getSegmentsFromDatabase()
@@ -32,7 +32,7 @@ func TestPostSegmentsWithValidData(t *testing.T) {
 	// then there will be only our newly created element in it
 	assert.Equal(t, len(segmentsFromDatabase), 1)
 	assert.Equal(t, segmentName, segmentsFromDatabase[0].Name)
-	assert.Equal(t, int(1), segmentsFromDatabase[0].Id)
+	assert.Equal(t, 1, segmentsFromDatabase[0].Id)
 }
 
 func TestPostSegmentsWithExistingName(t *testing.T) {
@@ -77,7 +77,7 @@ func TestGetSegmentsWithExistingData(t *testing.T) {
 	assert.Equal(t, http.StatusOK, response.Code, "Response code should be 200/OK")
 	assert.NotNil(t, responseBody)
 	assert.Equal(t, segmentName, responseBody[0].Name, "Should return the given segment name")
-	assert.Equal(t, 1, int(responseBody[0].Id))
+	assert.Equal(t, 1, responseBody[0].Id)
 }
 
 func TestGetSegmentsWithEmptyDatabase(t *testing.T) {

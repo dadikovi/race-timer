@@ -29,8 +29,8 @@ func TestPostGroupsWithValidData(t *testing.T) {
 	log.Print(response.Body.String())
 
 	assert.Equal(t, http.StatusOK, response.Code)
-	assert.Equal(t, segmentId, int(createdGroup.SegmentId))
-	assert.Equal(t, expectedGroupId, int(createdGroup.Id))
+	assert.Equal(t, segmentId, createdGroup.SegmentId)
+	assert.Equal(t, expectedGroupId, createdGroup.Id)
 
 	// when we get all the segments from the database
 	groupsFromDatabase := getGroupsFromDatabase()
@@ -38,11 +38,11 @@ func TestPostGroupsWithValidData(t *testing.T) {
 
 	// then there will be only our newly created element in it
 	assert.Equal(t, len(groupsFromDatabase), 1)
-	assert.Equal(t, int(segmentId), groupsFromDatabase[0].segmentId)
-	assert.Equal(t, int(expectedGroupId), groupsFromDatabase[0].id)
+	assert.Equal(t, segmentId, groupsFromDatabase[0].segmentId)
+	assert.Equal(t, expectedGroupId, groupsFromDatabase[0].id)
 
 	assert.Equal(t, len(racesFromDatabase), 1)
-	assert.Equal(t, int(expectedGroupId), racesFromDatabase[0].activeGroupId)
+	assert.Equal(t, expectedGroupId, racesFromDatabase[0].activeGroupId)
 }
 
 type GroupDao struct {

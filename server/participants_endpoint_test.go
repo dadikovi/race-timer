@@ -39,9 +39,9 @@ func TestPostParticipantsWithValidData(t *testing.T) {
 
 	// then there will be only our newly created element in it
 	assert.Equal(t, len(participantsFromDatabase), 1)
-	assert.Equal(t, int(createdGroup.Id), participantsFromDatabase[0].groupId)
-	assert.Equal(t, int(startNumber), participantsFromDatabase[0].startNumber)
-	assert.Equal(t, int(-1), participantsFromDatabase[0].raceTime)
+	assert.Equal(t, createdGroup.Id, participantsFromDatabase[0].groupId)
+	assert.Equal(t, startNumber, participantsFromDatabase[0].startNumber)
+	assert.Equal(t, -1, participantsFromDatabase[0].raceTime)
 }
 
 func createGroup(segmentId int) {
