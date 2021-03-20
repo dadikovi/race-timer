@@ -15,8 +15,6 @@ type App struct {
 	DB     *sql.DB
 }
 
-type RAWROW map[string]interface{}
-
 func (a *App) Initialize(user, password, dbname string) {
 	connectionString :=
 		fmt.Sprintf("user=%s password=%s dbname=%s sslmode=disable", user, password, dbname)
