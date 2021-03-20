@@ -11,5 +11,3 @@ func respondWithJSON(w http.ResponseWriter, code int, payload []byte) {
 	w.WriteHeader(code)
 	w.Write(payload)
 }
-
-type RAWROW map[string]interface{}
