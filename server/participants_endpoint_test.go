@@ -32,7 +32,7 @@ func TestPostParticipantsWithValidData(t *testing.T) {
 	assert.Equal(t, http.StatusOK, response.Code)
 	assert.Equal(t, createdGroup.Id, registeredParticipant.GroupId)
 	assert.Equal(t, startNumber, registeredParticipant.StartNumber)
-	assert.Equal(t, -1, registeredParticipant.StartNumber) // -1 raceTimeMs means that there is not a raceTime yet.
+	assert.Equal(t, -1, registeredParticipant.RaceTimeMs) // -1 raceTimeMs means that there is not a raceTime yet.
 
 	// when we get all the participants from the database
 	participantsFromDatabase := getParticipants()
