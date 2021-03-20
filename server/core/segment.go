@@ -8,12 +8,12 @@ import (
 )
 
 type Segment struct {
-	id   int64
+	id   int
 	name string
 }
 
 type SegmentDto struct {
-	Id   int64  `json:"id"`
+	Id   int    `json:"id"`
 	Name string `json:"name"`
 }
 
@@ -23,7 +23,7 @@ func MakeSegment(name string) Segment {
 	return Segment{0, name}
 }
 
-func FetchSegmentById(db *sql.DB, id int64) (Segment, error) {
+func FetchSegmentById(db *sql.DB, id int) (Segment, error) {
 	var segment = Segment{}
 
 	if err := db.QueryRow("SELECT id, name FROM segments WHERE id = $1", id).Scan(&segment.id, &segment.name); err != nil {
@@ -43,7 +43,7 @@ func FetchAll(db *sql.DB) ([]Segment, error) {
 
 	defer rows.Close()
 	for rows.Next() {
-		var id int64
+		var id int
 		var name string
 		err = rows.Scan(&id, &name)
 		if err != nil {

@@ -6,18 +6,18 @@ import (
 )
 
 type Participant struct {
-	startNumber int64
+	startNumber int
 	group       Group
-	raceTimeMs  int64
+	raceTimeMs  int
 }
 
 type ParticipantDto struct {
-	StartNumber int64 `json:"startNumber"`
-	GroupId     int64 `json:"groupId"`
-	RaceTimeMs  int64 `json:"raceTimeMs"`
+	StartNumber int `json:"startNumber"`
+	GroupId     int `json:"groupId"`
+	RaceTimeMs  int `json:"raceTimeMs"`
 }
 
-func MakeParticipantForGroup(startNumber int64, group Group) Participant {
+func MakeParticipantForGroup(startNumber int, group Group) Participant {
 	return Participant{startNumber, group, -1}
 }
 

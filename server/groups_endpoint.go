@@ -7,7 +7,7 @@ import (
 )
 
 type createGroupRequest struct {
-	SegmentId int64 `json:"segmentId"`
+	SegmentId int `json:"segmentId"`
 }
 
 func (a *App) createGroup(w http.ResponseWriter, r *http.Request) {

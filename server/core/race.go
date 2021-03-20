@@ -11,7 +11,7 @@ type Race struct {
 
 func GetRaceInstance(db *sql.DB) (Race, error) {
 	var instance = Race{}
-	var activeGroupId int64
+	var activeGroupId int
 
 	if err := db.QueryRow("SELECT active_group_id FROM races").Scan(&activeGroupId); err != nil {
 		if err := db.QueryRow(
