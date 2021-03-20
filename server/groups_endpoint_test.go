@@ -38,16 +38,16 @@ func TestPostGroupsWithValidData(t *testing.T) {
 
 	// then there will be only our newly created element in it
 	assert.Equal(t, len(groupsFromDatabase), 1)
-	assert.Equal(t, int64(segmentId), groupsFromDatabase[0].segmentId)
-	assert.Equal(t, int64(expectedGroupId), groupsFromDatabase[0].id)
+	assert.Equal(t, int(segmentId), groupsFromDatabase[0].segmentId)
+	assert.Equal(t, int(expectedGroupId), groupsFromDatabase[0].id)
 
 	assert.Equal(t, len(racesFromDatabase), 1)
-	assert.Equal(t, int64(expectedGroupId), racesFromDatabase[0].activeGroupId)
+	assert.Equal(t, int(expectedGroupId), racesFromDatabase[0].activeGroupId)
 }
 
 type GroupDao struct {
-	id        int64
-	segmentId int64
+	id        int
+	segmentId int
 	start     time.Time
 }
 

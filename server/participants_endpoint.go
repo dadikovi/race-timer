@@ -7,8 +7,8 @@ import (
 )
 
 type registerParticipantRequest struct {
-	StartNumber int64 `json:"startNumber"`
-	GroupId     int64 `json:"groupId"`
+	StartNumber int `json:"startNumber"`
+	GroupId     int `json:"groupId"`
 }
 
 func (a *App) registerParticipant(w http.ResponseWriter, r *http.Request) {

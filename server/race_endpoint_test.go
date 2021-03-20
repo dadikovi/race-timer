@@ -41,7 +41,7 @@ func TestStartActiveGroup(t *testing.T) {
 }
 
 type RaceDao struct {
-	activeGroupId int64
+	activeGroupId int
 }
 
 func getRacesFromDatabase() []RaceDao {

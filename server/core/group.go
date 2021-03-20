@@ -7,22 +7,22 @@ import (
 )
 
 type Group struct {
-	id            int64
+	id            int
 	parentSegment Segment
 }
 
 type GroupDto struct {
-	Id        int64 `json:"id"`
-	SegmentId int64 `json:"segmentId"`
+	Id        int `json:"id"`
+	SegmentId int `json:"segmentId"`
 }
 
 func MakeGroupForSegment(segment Segment) Group {
 	return Group{0, segment}
 }
 
-func fetchGroupById(db *sql.DB, id int64) (Group, error) {
+func fetchGroupById(db *sql.DB, id int) (Group, error) {
 	var group = Group{}
-	var parentSegmentId int64
+	var parentSegmentId int
 	if err := db.QueryRow("SELECT id, segment_id FROM groups WHERE id = $1", id).Scan(&group.id, &parentSegmentId); err != nil {
 		return group, err
 	}

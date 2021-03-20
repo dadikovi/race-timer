@@ -32,7 +32,7 @@ func TestPostSegmentsWithValidData(t *testing.T) {
 	// then there will be only our newly created element in it
 	assert.Equal(t, len(segmentsFromDatabase), 1)
 	assert.Equal(t, segmentName, segmentsFromDatabase[0].Name)
-	assert.Equal(t, int64(1), segmentsFromDatabase[0].Id)
+	assert.Equal(t, int(1), segmentsFromDatabase[0].Id)
 }
 
 func TestPostSegmentsWithExistingName(t *testing.T) {
