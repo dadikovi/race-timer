@@ -47,10 +47,10 @@ func (a *App) createGroup(w http.ResponseWriter, r *http.Request) {
 		respondWithError(w, http.StatusInternalServerError, setActiveGroupErr.Error())
 	}
 
-	var result, resultErr = savedGroup.ToJson()
-	if resultErr != nil {
-		respondWithError(w, http.StatusInternalServerError, resultErr.Error())
+	var dto = savedGroup.Dto()
+	j, err := json.Marshal(dto)
+	if err != nil {
+		respondWithError(w, http.StatusInternalServerError, err.Error())
 	}
-
-	respondWithJSON(w, http.StatusOK, result)
+	respondWithJSON(w, http.StatusOK, j)
 }

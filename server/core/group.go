@@ -2,7 +2,6 @@ package core
 
 import (
 	"database/sql"
-	"encoding/json"
 	"log"
 	"time"
 )
@@ -12,7 +11,7 @@ type Group struct {
 	parentSegment Segment
 }
 
-type groupDto struct {
+type GroupDto struct {
 	Id        int64 `json:"id"`
 	SegmentId int64 `json:"segmentId"`
 }
@@ -64,11 +63,6 @@ func (g Group) StartGroup(db *sql.DB) error {
 	return err
 }
 
-func (g *Group) ToJson() ([]byte, error) {
-	groupDto := groupDto{g.id, g.parentSegment.id}
-	j, err := json.Marshal(groupDto)
-	if err != nil {
-		return nil, err
-	}
-	return j, nil
+func (g *Group) Dto() GroupDto {
+	return GroupDto{g.id, g.parentSegment.id}
 }
