@@ -13,7 +13,9 @@ type createGroupRequest struct {
 func (a *App) createGroup(w http.ResponseWriter, r *http.Request) {
 
 	var request createGroupRequest
-	parseRequestBody(w, r, &request)
+	if err := parseRequestBody(w, r, &request); err != nil {
+		return
+	}
 
 	s, err := core.FetchSegmentById(a.DB, request.SegmentId)
 	respondWithClientError(w, err)
