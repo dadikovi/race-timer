@@ -22,10 +22,10 @@ func (a *App) createGroup(w http.ResponseWriter, r *http.Request) {
 	savedGroup, err := group.Save(a.DB)
 	respondWithClientError(w, err)
 
-	race, err := core.GetRaceInstance(a.DB)
+	_, err = a.race.SetActiveGroup(a.DB, savedGroup)
 	respondWithServerError(w, err)
 
-	_, err = race.SetActiveGroup(a.DB, savedGroup)
+	err = a.RefreshRace()
 	respondWithServerError(w, err)
 
 	respondWithDto(w, savedGroup.Dto())
@@ -33,10 +33,7 @@ func (a *App) createGroup(w http.ResponseWriter, r *http.Request) {
 
 func (a *App) startActiveGroup(w http.ResponseWriter, r *http.Request) {
 
-	race, err := core.GetRaceInstance(a.DB)
-	respondWithServerError(w, err)
-
-	g, err := race.GetActiveGroup().StartGroup(a.DB)
+	g, err := a.race.GetActiveGroup().StartGroup(a.DB)
 	respondWithServerError(w, err)
 
 	respondWithDto(w, g.Dto())

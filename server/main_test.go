@@ -32,7 +32,7 @@ func clearTable() {
 	if _, err := a.DB.Exec("DELETE FROM participants;"); err != nil {
 		log.Fatal(err)
 	}
-	if _, err := a.DB.Exec("DELETE FROM races"); err != nil {
+	if _, err := a.DB.Exec("DELETE FROM races; INSERT INTO races (active_group_id) VALUES (NULL);"); err != nil {
 		log.Fatal(err)
 	}
 	if _, err := a.DB.Exec("DELETE FROM groups"); err != nil {
