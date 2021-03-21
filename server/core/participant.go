@@ -2,7 +2,6 @@ package core
 
 import (
 	"database/sql"
-	"log"
 )
 
 type Participant struct {
@@ -26,12 +25,17 @@ func (p Participant) Save(db *sql.DB) (Participant, error) {
 		"INSERT INTO participants(start_number, group_id, race_time) VALUES($1, $2, $3) RETURNING start_number",
 		p.startNumber, p.group.id, p.raceTimeMs).Scan(&p.startNumber)
 
-	if err != nil {
-		log.Print("Could not save participant ", p, err)
-		return p, err
-	}
+	return p, err
+}
 
-	return p, nil
+func (p Participant) Finish(db *sql.DB) (Participant, error) {
+	err := db.QueryRow(
+		`UPDATE participants p SET p.race_time = $1
+		WHERE p.start_number = $2
+		RETURNING p.race_time`,
+		p.group.start, p.startNumber).Scan(&p.raceTimeMs)
+
+	return p, err
 }
 
 func (p *Participant) Dto() ParticipantDto {

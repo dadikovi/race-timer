@@ -8,6 +8,7 @@ import (
 
 type Group struct {
 	id            int
+	start         time.Time
 	parentSegment Segment
 }
 
@@ -17,7 +18,7 @@ type GroupDto struct {
 }
 
 func MakeGroupForSegment(segment Segment) Group {
-	return Group{0, segment}
+	return Group{0, time.Time{}, segment}
 }
 
 func fetchGroupById(db *sql.DB, id int) (Group, error) {
@@ -51,16 +52,12 @@ func (g Group) Save(db *sql.DB) (Group, error) {
 	return g, nil
 }
 
-func (g Group) StartGroup(db *sql.DB) error {
-	res, err := db.Exec(
-		"UPDATE groups SET start = $1 WHERE id = $2",
-		time.Now(), g.id)
+func (g Group) StartGroup(db *sql.DB) (Group, error) {
+	err := db.QueryRow(
+		"UPDATE groups SET start = $1 WHERE id = $2 RETURNING start",
+		time.Now(), g.id).Scan(&g.start)
 
-	rows, _ := res.RowsAffected()
-
-	log.Print("Updated rows: ", rows)
-
-	return err
+	return g, err
 }
 
 func (g *Group) Dto() GroupDto {
