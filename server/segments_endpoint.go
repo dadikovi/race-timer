@@ -25,11 +25,14 @@ type createSegmentRequest struct {
 
 func (a *App) createSegment(w http.ResponseWriter, r *http.Request) {
 	var request createSegmentRequest
-	parseRequestBody(w, r, &request)
+	if err := parseRequestBody(w, r, &request); err != nil {
+		return
+	}
 
 	if s, err := core.MakeSegment(request.Name).Save(a.DB); err != nil {
 		if err.Error() == core.ALREADY_EXISTS_ERROR_CODE {
 			respondWithClientError(w, err)
+			return
 		}
 		respondWithServerError(w, err)
 	} else {

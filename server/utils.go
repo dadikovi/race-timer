@@ -6,17 +6,21 @@ import (
 	"net/http"
 )
 
-func parseRequestBody(w http.ResponseWriter, r *http.Request, dto interface{}) {
-	var body, bodyReadError = ioutil.ReadAll(r.Body)
+func parseRequestBody(w http.ResponseWriter, r *http.Request, dto interface{}) error {
+	body, err := ioutil.ReadAll(r.Body)
 	defer r.Body.Close()
 
-	if bodyReadError != nil {
-		respondWithError(w, http.StatusBadRequest, bodyReadError.Error())
+	if err != nil {
+		respondWithError(w, http.StatusBadRequest, err.Error())
+		return err
 	}
 
 	if err := json.Unmarshal(body, dto); err != nil {
 		respondWithError(w, http.StatusBadRequest, err.Error())
+		return err
 	}
+
+	return nil
 }
 
 func respondWithError(w http.ResponseWriter, code int, message string) {
@@ -24,7 +28,8 @@ func respondWithError(w http.ResponseWriter, code int, message string) {
 }
 
 func respondWithJSON(w http.ResponseWriter, code int, payload []byte) {
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Add("Content-Type", "application/json")
+	w.Header().Add("Access-Control-Allow-Origin", "*")
 	w.WriteHeader(code)
 	w.Write(payload)
 }

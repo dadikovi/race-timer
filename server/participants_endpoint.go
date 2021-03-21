@@ -16,7 +16,9 @@ type registerParticipantRequest struct {
 func (a *App) registerParticipant(w http.ResponseWriter, r *http.Request) {
 
 	var request registerParticipantRequest
-	parseRequestBody(w, r, &request)
+	if err := parseRequestBody(w, r, &request); err != nil {
+		return
+	}
 
 	createdParticipant, err := core.MakeParticipantForGroup(request.StartNumber, a.race.GetActiveGroup()).Save(a.DB)
 	respondWithServerError(w, err)
