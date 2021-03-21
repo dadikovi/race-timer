@@ -20,6 +20,25 @@ func MakeParticipantForGroup(startNumber int, group Group) Participant {
 	return Participant{startNumber, group, -1}
 }
 
+func FetchParticipantByStartNumber(db *sql.DB, startNumber int) (Participant, error) {
+	participant := Participant{}
+	var groupId int
+
+	if err := db.QueryRow(
+		"SELECT start_number, group_id, race_time FROM participants WHERE start_number = $1",
+		startNumber).Scan(&participant.startNumber, &groupId, &participant.raceTimeMs); err != nil {
+		return participant, err
+	}
+
+	if group, err := fetchGroupById(db, groupId); err != nil {
+		return participant, err
+	} else {
+		participant.group = group
+	}
+
+	return participant, nil
+}
+
 func (p Participant) Save(db *sql.DB) (Participant, error) {
 	err := db.QueryRow(
 		"INSERT INTO participants(start_number, group_id, race_time) VALUES($1, $2, $3) RETURNING start_number",
