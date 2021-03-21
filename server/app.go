@@ -32,11 +32,3 @@ func (a *App) Initialize(user, password, dbname string) {
 func (a *App) Run(addr string) {
 	log.Fatal(http.ListenAndServe(addr, a.Router))
 }
-
-func (a *App) initializeRoutes() {
-	a.Router.HandleFunc("/segments", a.createSegment).Methods("POST")
-	a.Router.HandleFunc("/segments", a.fetchAllSegment).Methods("GET")
-	a.Router.HandleFunc("/groups", a.createGroup).Methods("POST")
-	a.Router.HandleFunc("/groups/active", a.startActiveGroup).Methods("PUT")
-	a.Router.HandleFunc("/participants", a.registerParticipant).Methods("POST")
-}
