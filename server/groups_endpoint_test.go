@@ -45,10 +45,42 @@ func TestPostGroupsWithValidData(t *testing.T) {
 	assert.Equal(t, expectedGroupId, racesFromDatabase[0].activeGroupId)
 }
 
+func TestStartActiveGroup(t *testing.T) {
+
+	// given
+	var createdSegment core.SegmentDto
+	var createdGroup core.GroupDto
+
+	// and
+	clearTable()
+	callCreateSegmentEndpoint("any-name", &createdSegment)
+	callCreateGroupEndpoint(int(createdSegment.Id), &createdGroup)
+
+	// when active group start endpoint is called
+	response := callStartActiveGroupEndpoint()
+	log.Print(response.Body.String())
+
+	// then
+	assert.Equal(t, http.StatusOK, response.Code)
+
+	// when we get all the groups from the database
+	groupsFromDatabase := getGroupsFromDatabase()
+
+	// then there will be only our newly created element in it
+	assert.Equal(t, len(groupsFromDatabase), 1)
+	assert.True(t, time.Now().UTC().Sub(groupsFromDatabase[0].start) < 10000000) // 10ms difference
+}
+
 type GroupDao struct {
 	id        int
 	segmentId int
 	start     time.Time
+}
+
+func callStartActiveGroupEndpoint() *httptest.ResponseRecorder {
+	req, _ := http.NewRequest("PUT", "/groups/active", bytes.NewBufferString(``))
+	req.Header.Set("Content-Type", "application/json")
+	return executeRequest(req)
 }
 
 func callCreateGroupEndpoint(segmentId int, responseDto interface{}) *httptest.ResponseRecorder {

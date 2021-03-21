@@ -2,6 +2,8 @@ package core
 
 import (
 	"database/sql"
+	"log"
+	"time"
 )
 
 type Participant struct {
@@ -48,11 +50,12 @@ func (p Participant) Save(db *sql.DB) (Participant, error) {
 }
 
 func (p Participant) Finish(db *sql.DB) (Participant, error) {
+	log.Print("PART FINISH ", p.group.start, time.Now().UTC())
 	err := db.QueryRow(
-		`UPDATE participants p SET p.race_time = $1
-		WHERE p.start_number = $2
-		RETURNING p.race_time`,
-		p.group.start, p.startNumber).Scan(&p.raceTimeMs)
+		`UPDATE participants SET race_time = $1
+		WHERE start_number = $2
+		RETURNING race_time`,
+		time.Now().UTC().Sub(p.group.start).Milliseconds(), p.startNumber).Scan(&p.raceTimeMs)
 
 	return p, err
 }

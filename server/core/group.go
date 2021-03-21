@@ -2,7 +2,6 @@ package core
 
 import (
 	"database/sql"
-	"log"
 	"time"
 )
 
@@ -23,9 +22,15 @@ func MakeGroupForSegment(segment Segment) Group {
 
 func fetchGroupById(db *sql.DB, id int) (Group, error) {
 	var group = Group{}
+	var start sql.NullTime
 	var parentSegmentId int
-	if err := db.QueryRow("SELECT id, segment_id FROM groups WHERE id = $1", id).Scan(&group.id, &parentSegmentId); err != nil {
+
+	if err := db.QueryRow("SELECT id, start, segment_id FROM groups WHERE id = $1", id).Scan(&group.id, &start, &parentSegmentId); err != nil {
 		return group, err
+	}
+
+	if start.Valid {
+		group.start = start.Time
 	}
 
 	segment, err := FetchSegmentById(db, parentSegmentId)
@@ -44,18 +49,13 @@ func (g Group) Save(db *sql.DB) (Group, error) {
 		"INSERT INTO groups(id, segment_id) VALUES(DEFAULT, $1) RETURNING id",
 		g.parentSegment.id).Scan(&g.id)
 
-	if err != nil {
-		log.Print("Could not save group ", g, err)
-		return g, err
-	}
-
-	return g, nil
+	return g, err
 }
 
 func (g Group) StartGroup(db *sql.DB) (Group, error) {
 	err := db.QueryRow(
 		"UPDATE groups SET start = $1 WHERE id = $2 RETURNING start",
-		time.Now(), g.id).Scan(&g.start)
+		time.Now().UTC(), g.id).Scan(&g.start)
 
 	return g, err
 }
