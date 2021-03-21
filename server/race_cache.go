@@ -7,7 +7,3 @@ func (a *App) RefreshRace() error {
 	a.race = race
 	return err
 }
-
-func (a *App) Race() core.Race {
-	return a.race
-}
