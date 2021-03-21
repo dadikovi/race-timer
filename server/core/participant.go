@@ -2,7 +2,6 @@ package core
 
 import (
 	"database/sql"
-	"log"
 	"time"
 )
 
@@ -50,7 +49,6 @@ func (p Participant) Save(db *sql.DB) (Participant, error) {
 }
 
 func (p Participant) Finish(db *sql.DB) (Participant, error) {
-	log.Print("PART FINISH ", p.group.start, time.Now().UTC())
 	err := db.QueryRow(
 		`UPDATE participants SET race_time = $1
 		WHERE start_number = $2
