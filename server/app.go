@@ -27,6 +27,8 @@ func (a *App) Initialize(user, password, dbname string) {
 		log.Fatal(err)
 	}
 
+	a.ensureTableExists()
+
 	a.race, err = core.GetRaceInstance(a.DB)
 	if err != nil {
 		log.Fatal(err)
@@ -39,3 +41,40 @@ func (a *App) Initialize(user, password, dbname string) {
 func (a *App) Run(addr string) {
 	log.Fatal(http.ListenAndServe(addr, a.Router))
 }
+
+func (a *App) ensureTableExists() {
+	if _, err := a.DB.Exec(tableCreationQuery); err != nil {
+		log.Fatal(err)
+	}
+}
+
+const tableCreationQuery = `
+CREATE TABLE IF NOT EXISTS segments
+(
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS groups
+(
+    id SERIAL PRIMARY KEY,
+	start TIMESTAMP,
+	segment_id INTEGER,
+	CONSTRAINT group_segment FOREIGN KEY(segment_id) REFERENCES segments(id)
+);
+
+CREATE TABLE IF NOT EXISTS participants
+(
+    start_number INTEGER PRIMARY KEY,
+	finish TIMESTAMP,
+	group_id INTEGER,
+	race_time INTEGER,
+	CONSTRAINT participant_group FOREIGN KEY(group_id) REFERENCES groups(id)
+);
+
+CREATE TABLE IF NOT EXISTS races
+(
+	active_group_id INTEGER,
+	CONSTRAINT active_group FOREIGN KEY(active_group_id) REFERENCES groups(id)
+);
+`

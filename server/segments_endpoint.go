@@ -24,7 +24,6 @@ type createSegmentRequest struct {
 }
 
 func (a *App) createSegment(w http.ResponseWriter, r *http.Request) {
-
 	var request createSegmentRequest
 	parseRequestBody(w, r, &request)
 
