@@ -28,6 +28,9 @@ func (a *App) createGroup(w http.ResponseWriter, r *http.Request) {
 	_, err = race.SetActiveGroup(a.DB, savedGroup)
 	respondWithServerError(w, err)
 
+	err = a.RefreshRace()
+	respondWithServerError(w, err)
+
 	respondWithDto(w, savedGroup.Dto())
 }
 

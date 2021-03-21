@@ -22,7 +22,7 @@ type SegmentResultsDto struct {
 	List        []ParticipantDto `json:"participants"`
 }
 
-var CACHE_EVICTION_TIMEOUT = 5 * time.Second
+var RACE_RESULTS_CACHE_EVICTION_TIMEOUT = 5 * time.Second
 
 func GetRaceInstance(db *sql.DB) (Race, error) {
 	var instance = Race{}
@@ -61,7 +61,7 @@ func (r *Race) Results(db *sql.DB) (RaceResultsDto, error) {
 }
 
 func (r *Race) refreshResultsIfNeeded(db *sql.DB) error {
-	if time.Now().UTC().Sub(r.results.LastRefresh) < CACHE_EVICTION_TIMEOUT {
+	if time.Now().UTC().Sub(r.results.LastRefresh) < RACE_RESULTS_CACHE_EVICTION_TIMEOUT {
 		return nil
 	}
 
