@@ -29,8 +29,8 @@ export default class CreateSegmentForm extends React.Component {
 
   render() {
     return(
-      <div>
-        <TextField onChange={e => this.setState({
+      <div style={{padding: '30px 10px'}}>
+        <TextField placeholder='New segment name' onChange={e => this.setState({
           segmentName: e.target.value
         })} value={this.state.segmentName}></TextField>
         <Button onClick={() => this.createSegment(this.state.segmentName)} color="primary">Create</Button>

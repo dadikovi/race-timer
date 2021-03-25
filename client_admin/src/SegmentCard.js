@@ -3,10 +3,10 @@ import { Accordion, AccordionSummary, Typography } from "@material-ui/core";
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 export default class SegmentCard extends React.Component {
-    
+
     render() {
         return(
-          <div>
+          <div style={{margin: '5px 0px'}}>
             <Accordion>
             <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
