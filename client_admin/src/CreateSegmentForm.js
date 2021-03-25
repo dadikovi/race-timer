@@ -1,5 +1,5 @@
 import { Button, TextField } from '@material-ui/core';
-import React, { useState } from 'react';
+import React from 'react';
 
 export default class CreateSegmentForm extends React.Component {
 

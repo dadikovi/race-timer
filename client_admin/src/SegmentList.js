@@ -1,6 +1,6 @@
-import { Button, TextField } from '@material-ui/core';
 import React, { useState } from 'react';
 import CreateSegmentForm from './CreateSegmentForm'
+import SegmentCard from './SegmentCard';
 
 export default class SegmentList extends React.Component {
 
@@ -11,6 +11,7 @@ export default class SegmentList extends React.Component {
     };
 
     this.getSegments = this.getSegments.bind(this);
+    this.getSegments();
   }
 
   getSegments() {
@@ -28,10 +29,16 @@ export default class SegmentList extends React.Component {
   }
 
   render() {
+    let segmentCards = []
+
+    for (let segment of this.state.segments) {
+      segmentCards.push(<SegmentCard name={segment.name}></SegmentCard>)
+    }
+
     return(
       <div>
         <CreateSegmentForm onSegmentCreated={this.getSegments}></CreateSegmentForm>
-        {JSON.stringify(this.state.segments)}
+        {segmentCards}
       </div>
     );
   }

@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import SegmentList from './SegmentList'
 import './App.css';
 
