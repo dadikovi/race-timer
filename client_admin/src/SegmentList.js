@@ -10,6 +10,7 @@ export default class SegmentList extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      results: {},
       segments: []
     };
 
@@ -56,7 +57,7 @@ export default class SegmentList extends React.Component {
     }
 
     for (let segment of this.state.segments) {
-      segmentCards.push(<SegmentCard name={segment.name}></SegmentCard>)
+      segmentCards.push(<SegmentCard segment={segment}></SegmentCard>)
     }
 
     return(

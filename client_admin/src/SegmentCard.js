@@ -10,16 +10,17 @@ function createGroup(segmentId) {
 }
 
 export default function SegmentCard(props) {
+    console.log(JSON.stringify(props))
     return(
         <Accordion style={{margin: '5px 0px'}}>
             <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel1a-content"
                 id="panel1a-header">
-                <Typography>{props.name}</Typography>
+                <Typography>{props.segment.name}</Typography>
             </AccordionSummary>
             <AccordionDetails>
-                <Button onClick={() => createGroup(props.id)} color="primary">Start new group</Button>
+                <Button onClick={() => createGroup(props.segment.id)} color="primary">Start new group</Button>
             </AccordionDetails>
         </Accordion>
     );
