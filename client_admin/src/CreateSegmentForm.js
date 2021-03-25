@@ -29,7 +29,7 @@ export default class CreateSegmentForm extends React.Component {
 
   render() {
     return(
-      <div style={{padding: '30px 10px'}}>
+      <div>
         <TextField placeholder='New segment name' onChange={e => this.setState({
           segmentName: e.target.value
         })} value={this.state.segmentName}></TextField>

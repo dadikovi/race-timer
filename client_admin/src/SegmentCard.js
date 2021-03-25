@@ -1,21 +1,26 @@
 import React from 'react';
-import { Accordion, AccordionSummary, Typography } from "@material-ui/core";
+import { Accordion, AccordionDetails, AccordionSummary, Typography, Button } from "@material-ui/core";
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
-export default class SegmentCard extends React.Component {
+function createGroup(segmentId) {
+    fetch("http://localhost:8010/groups", {
+        method: 'POST',
+        body: JSON.stringify({segmentId: segmentId})
+    });
+}
 
-    render() {
-        return(
-          <div style={{margin: '5px 0px'}}>
-            <Accordion>
+export default function SegmentCard(props) {
+    return(
+        <Accordion style={{margin: '5px 0px'}}>
             <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel1a-content"
                 id="panel1a-header">
-                <Typography>{this.props.name}</Typography>
-                </AccordionSummary>
-            </Accordion>
-          </div>
-        );
-      }
+                <Typography>{props.name}</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+                <Button onClick={() => createGroup(props.id)} color="primary">Start new group</Button>
+            </AccordionDetails>
+        </Accordion>
+    );
 }
