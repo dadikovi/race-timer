@@ -1,17 +1,24 @@
-import { Card, Chip, CardContent, Typography } from "@material-ui/core";
+import { Card, Chip, CardContent, Typography, Button, Divider } from "@material-ui/core";
 import FaceIcon from '@material-ui/icons/Face';
 import DoneIcon from '@material-ui/icons/Done';
 import DirectionsRunIcon from '@material-ui/icons/DirectionsRun';
+
+function startActiveGroup() {
+    fetch("http://localhost:8010/groups/active", {
+        method: 'POST',
+        body: JSON.stringify({dummy: 'dummy'})
+    });
+}
 
 export default function ActiveGroup(props) {
     let participants = []
     if (props.participants) {
         for (let partipant of props.participants) {
         let icon = partipant.raceTimeMs > 0 ? <DoneIcon /> : <DirectionsRunIcon />
-        let label = partipant.startNumber + ' '
+        let label = `#${partipant.startNumber}`
 
-        if (participants.raceTimeMs > 0) {
-            label += partipant.raceTimeMs
+        if (partipant.raceTimeMs > 0) {
+            label += ` (${partipant.raceTimeMs / 1000} s)`
         }
         participants.push(<Chip
             icon={icon}
@@ -28,6 +35,8 @@ export default function ActiveGroup(props) {
     return (<Card>
         <CardContent>
             <Typography variant="h5" component="h2">Active group</Typography>
+            <Button variant="contained"  onClick={() => startActiveGroup()} color="primary">Start</Button>
+            <Divider />
             {participants}
             {emptyState}
         </CardContent>

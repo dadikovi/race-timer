@@ -20,7 +20,7 @@ export default function SegmentCard(props) {
                 <Typography>{props.segment.name}</Typography>
             </AccordionSummary>
             <AccordionDetails>
-                <Button onClick={() => createGroup(props.segment.id)} color="primary">Start new group</Button>
+                <Button variant="contained"  onClick={() => createGroup(props.segment.id)} color="primary">Create new group</Button>
             </AccordionDetails>
         </Accordion>
     );
