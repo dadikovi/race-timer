@@ -1,5 +1,5 @@
 import { Button, TextField } from '@material-ui/core';
-import React, { useState } from 'react';
+import React from 'react';
 
 export default class CreateSegmentForm extends React.Component {
 
@@ -30,10 +30,11 @@ export default class CreateSegmentForm extends React.Component {
   render() {
     return(
       <div>
-        <TextField onChange={e => this.setState({
+        <TextField variant="filled" label='New segment name' onChange={e => this.setState({
           segmentName: e.target.value
         })} value={this.state.segmentName}></TextField>
-        <Button onClick={() => this.createSegment(this.state.segmentName)} color="primary">Create</Button>
+        <Button variant="contained"  onClick={() => this.createSegment(this.state.segmentName)} color="primary">Create</Button>
+        <Button variant="outlined"  onClick={() => this.props.onRefresh()} color="primary">Refresh</Button>
       </div>
     );
   }
