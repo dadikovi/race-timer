@@ -34,6 +34,7 @@ export default class CreateSegmentForm extends React.Component {
           segmentName: e.target.value
         })} value={this.state.segmentName}></TextField>
         <Button onClick={() => this.createSegment(this.state.segmentName)} color="primary">Create</Button>
+        <Button onClick={() => this.props.onRefresh()} color="primary">Refresh</Button>
       </div>
     );
   }
