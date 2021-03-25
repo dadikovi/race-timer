@@ -9,3 +9,7 @@ button {
 hr {
   margin: 10px 0px !important;
 }
+
+.MuiChip-root {
+  margin: 0px 2px !important;
+}
