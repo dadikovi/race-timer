@@ -1,8 +1,7 @@
-import { Card, Chip, CardContent, Typography, Button, Divider, Box, IconButton } from "@material-ui/core";
-import DoneIcon from '@material-ui/icons/Done';
-import DirectionsRunIcon from '@material-ui/icons/DirectionsRun';
+import { Card, CardContent, Typography, Box, IconButton } from "@material-ui/core";
 import PlayCircleFilledIcon from '@material-ui/icons/PlayCircleFilled';
 import { ParticipantDto } from './model';
+import Participants from './Participants'
 import { startActiveGroup, useAsyncError } from './service';
 
 interface ActiveGroupProps {
@@ -12,27 +11,6 @@ interface ActiveGroupProps {
 
 export default function ActiveGroup(props: ActiveGroupProps) {
     const throwError = useAsyncError();
-    
-    let participants = []
-    if (props.participants) {
-        for (let partipant of props.participants) {
-        let icon = partipant.raceTimeMs > 0 ? <DoneIcon /> : <DirectionsRunIcon />
-        let label = `#${partipant.startNumber}`
-
-        if (partipant.raceTimeMs > 0) {
-            label += ` (${partipant.raceTimeMs / 1000} s)`
-        }
-        participants.push(<Chip
-            icon={icon}
-            label={label}
-            color="primary"
-            deleteIcon={icon}></Chip>
-          )
-        }
-    }
-    
-    const emptyState = participants.length > 0 ? '' : 'No active group.'
-
 
     return (<Card>
         <CardContent>
@@ -46,11 +24,7 @@ export default function ActiveGroup(props: ActiveGroupProps) {
                     <PlayCircleFilledIcon />
                 </IconButton>
             </Box>
-            <Box className="formbox" display="flex" alignItems="center">
-                {participants}
-            {emptyState}
-            </Box>
-            
+            <Participants participants={props.participants}></Participants>            
         </CardContent>
     </Card>)
 }

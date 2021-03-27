@@ -32,7 +32,8 @@ export default function AdminPanel() {
 
   if (segments) {
     for (let segment of segments) {
-      segmentCards.push(<SegmentCard onRefresh={callRefresh} segment={segment}></SegmentCard>)
+      segmentCards.push(<SegmentCard onRefresh={callRefresh} segment={segment} 
+        participants={results?.segments.filter(s => s.segmentName === segment.name)[0].participants}></SegmentCard>)
     }
   }
 

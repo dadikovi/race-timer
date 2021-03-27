@@ -2,12 +2,14 @@ import React from 'react';
 import { Accordion, AccordionDetails, AccordionSummary, Typography, Button, IconButton, Box } from "@material-ui/core";
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
-import { SegmentDto } from './model';
+import { ParticipantDto, SegmentDto } from './model';
 import { createGroup, useAsyncError } from './service';
+import Participants from './Participants';
 
 interface SegmentCardProps {
     onRefresh: Function;
     segment: SegmentDto;
+    participants?: ParticipantDto[]
 }
 export default function SegmentCard(props: SegmentCardProps) {
     const throwError = useAsyncError();
@@ -19,7 +21,7 @@ export default function SegmentCard(props: SegmentCardProps) {
                 aria-controls="panel1a-content"
                 id="panel1a-header">
                 <Box display="flex" alignItems="center">
-                    <Typography>{props.segment.name}</Typography>
+                    <Typography variant="h5" component="h2" color="primary">{props.segment.name}</Typography>
                     <IconButton size="medium" color="primary" onClick={() => {
                         createGroup(props.segment.id)
                             .then(() => props.onRefresh())
@@ -31,7 +33,7 @@ export default function SegmentCard(props: SegmentCardProps) {
                 
             </AccordionSummary>
             <AccordionDetails>
-                TODO
+                <Participants participants = {props.participants}></Participants>
             </AccordionDetails>
         </Accordion>
     );
