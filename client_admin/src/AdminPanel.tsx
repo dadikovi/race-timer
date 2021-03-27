@@ -47,7 +47,7 @@ function refresh(setResults: Function, setSegments: Function) {
   getSegments(setSegments);
 }
 
-export default function SegmentList(props: any) {
+export default function AdminPanel(props: any) {
 
   const [segments, setSegments] = useState<SegmentDto[] | undefined>();
   const [results, setResults] = useState<RaceResultstDo | undefined>();

@@ -1,4 +1,4 @@
-import SegmentList from './SegmentList'
+import AdminPanel from './AdminPanel'
 import './App.css';
 import { AppBar, Toolbar, Typography } from "@material-ui/core";
 
@@ -13,7 +13,7 @@ function App() {
         </Toolbar>
       </AppBar>
       <main>
-        <SegmentList></SegmentList>
+        <AdminPanel></AdminPanel>
       </main>
     </div>
   );
