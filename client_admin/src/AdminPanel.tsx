@@ -46,7 +46,7 @@ export default function AdminPanel() {
           </Paper>
         </Grid>
         <Grid item xs={6}>
-          <Paper style={{padding: '10px'}}>
+          <Paper color="error.light" style={{padding: '10px'}}>
             <ScannerMock mockChanged={callRefresh}></ScannerMock>
           </Paper>
         </Grid>

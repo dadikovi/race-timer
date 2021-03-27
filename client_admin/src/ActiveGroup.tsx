@@ -1,6 +1,7 @@
-import { Card, Chip, CardContent, Typography, Button, Divider } from "@material-ui/core";
+import { Card, Chip, CardContent, Typography, Button, Divider, Box, IconButton } from "@material-ui/core";
 import DoneIcon from '@material-ui/icons/Done';
 import DirectionsRunIcon from '@material-ui/icons/DirectionsRun';
+import PlayCircleFilledIcon from '@material-ui/icons/PlayCircleFilled';
 import { ParticipantDto } from './model';
 import { startActiveGroup, useAsyncError } from './service';
 
@@ -35,15 +36,21 @@ export default function ActiveGroup(props: ActiveGroupProps) {
 
     return (<Card>
         <CardContent>
-            <Typography variant="h5" component="h2">Active group</Typography>
-            <Button variant="contained"  onClick={() => {
-                startActiveGroup()
-                    .then(() => { if (props.onRefresh) {props.onRefresh()}})
-                    .catch((err) => throwError(err));
-                }} color="primary">Start</Button>
-            <Divider />
-            {participants}
+            <Box display="flex" alignItems="center">
+                <Typography variant="h5" component="h2">Active group</Typography>
+                <IconButton size="medium" color="primary" onClick={() => {
+                    startActiveGroup()
+                        .then(() => { if (props.onRefresh) {props.onRefresh()}})
+                        .catch((err) => throwError(err));
+                    }}>
+                    <PlayCircleFilledIcon />
+                </IconButton>
+            </Box>
+            <Box className="formbox" display="flex" alignItems="center">
+                {participants}
             {emptyState}
+            </Box>
+            
         </CardContent>
     </Card>)
 }

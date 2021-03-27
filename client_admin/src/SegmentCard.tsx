@@ -1,6 +1,7 @@
 import React from 'react';
-import { Accordion, AccordionDetails, AccordionSummary, Typography, Button } from "@material-ui/core";
+import { Accordion, AccordionDetails, AccordionSummary, Typography, Button, IconButton, Box } from "@material-ui/core";
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import AddCircleIcon from '@material-ui/icons/AddCircle';
 import { SegmentDto } from './model';
 import { createGroup, useAsyncError } from './service';
 
@@ -17,14 +18,20 @@ export default function SegmentCard(props: SegmentCardProps) {
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel1a-content"
                 id="panel1a-header">
-                <Typography>{props.segment.name}</Typography>
+                <Box display="flex" alignItems="center">
+                    <Typography>{props.segment.name}</Typography>
+                    <IconButton size="medium" color="primary" onClick={() => {
+                        createGroup(props.segment.id)
+                            .then(() => props.onRefresh())
+                            .catch((err) => throwError(err));
+                    }}>
+                        <AddCircleIcon />
+                    </IconButton>
+                </Box>
+                
             </AccordionSummary>
             <AccordionDetails>
-                <Button variant="contained" onClick={() => {
-                    createGroup(props.segment.id)
-                        .then(() => props.onRefresh())
-                        .catch((err) => throwError(err));
-                }} color="primary">Create new group</Button>
+                TODO
             </AccordionDetails>
         </Accordion>
     );
