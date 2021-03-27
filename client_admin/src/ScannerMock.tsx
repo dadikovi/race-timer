@@ -1,24 +1,6 @@
 import React, {useState} from 'react';
 import { TextField, Button } from "@material-ui/core";
-
-function registerParticipant(startNumber: Number | undefined) {
-  if (!startNumber) {
-    return
-  }
-  fetch("http://localhost:8010/participants", {
-    method: 'POST',
-    body: JSON.stringify({startNumber: startNumber})
-  });
-}
-
-function finishParticipant(startNumber: Number | undefined) {
-  if (!startNumber) {
-    return
-  }
-  fetch(`http://localhost:8010/participants/${startNumber}`, {
-    method: 'POST'
-  });
-}
+import { registerParticipant, finishParticipant } from './service';
 
 export default function ScannerMock() {
   const [startingNumber, setStartingNumber] = useState<Number | undefined>();

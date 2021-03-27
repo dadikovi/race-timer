@@ -2,13 +2,7 @@ import React from 'react';
 import { Accordion, AccordionDetails, AccordionSummary, Typography, Button } from "@material-ui/core";
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { SegmentDto } from './model';
-
-function createGroup(segmentId: Number | undefined) {
-    fetch("http://localhost:8010/groups", {
-        method: 'POST',
-        body: JSON.stringify({segmentId: segmentId})
-    });
-}
+import { createGroup } from './service';
 
 interface SegmentCardProps {
     segment: SegmentDto;

@@ -2,13 +2,7 @@ import { Card, Chip, CardContent, Typography, Button, Divider } from "@material-
 import DoneIcon from '@material-ui/icons/Done';
 import DirectionsRunIcon from '@material-ui/icons/DirectionsRun';
 import { ParticipantDto } from './model';
-
-function startActiveGroup() {
-    fetch("http://localhost:8010/groups/active", {
-        method: 'POST',
-        body: JSON.stringify({dummy: 'dummy'})
-    });
-}
+import { startActiveGroup } from './service';
 
 interface ActiveGroupProps {
     participants?: ParticipantDto[] | undefined

@@ -5,22 +5,7 @@ import SegmentCard from './SegmentCard';
 import ScannerMock from './ScannerMock';
 import { SegmentDto, RaceResultsDo } from './model';
 import { Grid, Paper } from "@material-ui/core";
-
-function getResults(setResults: Function) {
-  fetch("http://localhost:8010/race/results") 
-  .then(res => res.json())
-  .then(
-    (result) => { setResults(result) }
-  )
-}
-
-function getSegments(setSegments: Function) {
-  fetch("http://localhost:8010/segments") 
-    .then(res => res.json())
-    .then(
-      (result) => { setSegments(result) }
-    )
-}
+import {getResults, getSegments} from './service';
 
 function refresh(setResults: Function, setSegments: Function) {
   getResults(setResults);

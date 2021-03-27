@@ -1,27 +1,12 @@
 import { Button, TextField } from '@material-ui/core';
 import React, {useState} from 'react';
-
-function createSegment(segmentName: string | undefined, onSegmentCreated: Function | undefined) {
-  fetch("http://localhost:8010/segments", {
-    method: 'POST',
-    body: JSON.stringify({name: segmentName})
-  }) 
-    .then(res => res.json())
-    .then(
-      () => {
-        if (onSegmentCreated !== undefined) {
-          onSegmentCreated()
-        }
-      },
-      (error) => {
-      }
-    )
-}
+import { createSegment } from './service';
 
 interface CreateSegmentFormProps {
   onRefresh: Function;
   onSegmentCreated: Function;
 }
+
 export default function CreateSegmentForm(props: CreateSegmentFormProps) {
 
   const [segmentName, setSegmentName] = useState<string | undefined>();
