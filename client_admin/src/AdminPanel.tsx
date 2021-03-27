@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ActiveGroup from './ActiveGroup';
 import CreateSegmentForm from './CreateSegmentForm'
 import SegmentCard from './SegmentCard';
@@ -14,13 +14,14 @@ async function refresh(setResults: Function, setSegments: Function) {
   setSegments(segments)
 }
 
-
 export default function AdminPanel() {
 
   const [segments, setSegments] = useState<SegmentDto[] | undefined>();
   const [results, setResults] = useState<RaceResultsDo | undefined>();
 
-  // this.refresh(); TODO better refreshing
+  useEffect(() => {
+    refresh(setResults, setSegments)
+  }, []);
   
   let segmentCards = []
   let activeGroup = <ActiveGroup></ActiveGroup>
