@@ -3,6 +3,7 @@ import ActiveGroup from './ActiveGroup';
 import CreateSegmentForm from './CreateSegmentForm'
 import SegmentCard from './SegmentCard';
 import ScannerMock from './ScannerMock';
+import RefreshForm from './RefreshForm';
 import { SegmentDto, RaceResultsDo } from './model';
 import { Grid, Paper } from "@material-ui/core";
 import {getResults, getSegments} from './service';
@@ -38,13 +39,19 @@ export default function AdminPanel(props: AdminPanelProps) {
   return(
     <div>
       {props.displayAdminFeatures && <Grid container spacing={1}>
-        <Grid item xs={6}>
+        <Grid item xs={4}>
           <Paper style={{padding: '10px'}}>
             <CreateSegmentForm 
               onRefresh={callRefresh}/>
           </Paper>
         </Grid>
-        <Grid item xs={6}>
+        <Grid item xs={4}>
+          <Paper style={{padding: '10px'}}>
+            <RefreshForm 
+              onRefresh={callRefresh}/>
+          </Paper>
+        </Grid>
+        <Grid item xs={4}>
           <Paper color="error.light" style={{padding: '10px'}}>
             <ScannerMock mockChanged={callRefresh}></ScannerMock>
           </Paper>
