@@ -1,15 +1,15 @@
 import { Button, TextField } from '@material-ui/core';
 import React, {useState} from 'react';
-import { createSegment } from './service';
+import { createSegment, useAsyncError } from './service';
 
 interface CreateSegmentFormProps {
   onRefresh: Function;
-  onSegmentCreated: Function;
 }
 
 export default function CreateSegmentForm(props: CreateSegmentFormProps) {
 
   const [segmentName, setSegmentName] = useState<string | undefined>();
+  const throwError = useAsyncError();
 
   return(
     <div>
@@ -17,9 +17,8 @@ export default function CreateSegmentForm(props: CreateSegmentFormProps) {
       <Button variant="contained"  
         onClick={() => {
           createSegment(segmentName)
-          if (props.onSegmentCreated !== undefined) {
-            props.onSegmentCreated()
-          }
+            .then(() => props.onRefresh())
+            .catch((err) => throwError(err));
         }} 
         color="primary">
         Create

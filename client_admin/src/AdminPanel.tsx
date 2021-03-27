@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ActiveGroup from './ActiveGroup';
 import CreateSegmentForm from './CreateSegmentForm'
 import SegmentCard from './SegmentCard';
@@ -7,20 +7,21 @@ import { SegmentDto, RaceResultsDo } from './model';
 import { Grid, Paper } from "@material-ui/core";
 import {getResults, getSegments} from './service';
 
-async function refresh(setResults: Function, setSegments: Function) {
-  const raceResults = await getResults();
-  setResults(raceResults)
-  const segments = await getSegments();
-  setSegments(segments)
+function refresh(setResults: Function, setSegments: Function) {
+  getResults().then(raceResults => setResults(raceResults));
+  getSegments().then(segments => setSegments(segments));  
 }
-
 
 export default function AdminPanel() {
 
   const [segments, setSegments] = useState<SegmentDto[] | undefined>();
   const [results, setResults] = useState<RaceResultsDo | undefined>();
 
-  // this.refresh(); TODO better refreshing
+  const callRefresh = () => refresh(setResults, setSegments);
+
+  useEffect(() => {
+    refresh(setResults, setSegments)
+  }, []);
   
   let segmentCards = []
   let activeGroup = <ActiveGroup></ActiveGroup>
@@ -31,7 +32,7 @@ export default function AdminPanel() {
 
   if (segments) {
     for (let segment of segments) {
-      segmentCards.push(<SegmentCard segment={segment}></SegmentCard>)
+      segmentCards.push(<SegmentCard onRefresh={callRefresh} segment={segment}></SegmentCard>)
     }
   }
 
@@ -41,16 +42,12 @@ export default function AdminPanel() {
         <Grid item xs={6}>
           <Paper style={{padding: '10px'}}>
             <CreateSegmentForm 
-              onRefresh={() => refresh(setResults, setSegments)} 
-              onSegmentCreated={async () => {
-                const segments = await getSegments();
-                setSegments(segments)
-              }} />
+              onRefresh={callRefresh}/>
           </Paper>
         </Grid>
         <Grid item xs={6}>
           <Paper style={{padding: '10px'}}>
-            <ScannerMock></ScannerMock>
+            <ScannerMock mockChanged={callRefresh}></ScannerMock>
           </Paper>
         </Grid>
       </Grid>

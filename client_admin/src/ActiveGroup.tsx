@@ -2,13 +2,16 @@ import { Card, Chip, CardContent, Typography, Button, Divider } from "@material-
 import DoneIcon from '@material-ui/icons/Done';
 import DirectionsRunIcon from '@material-ui/icons/DirectionsRun';
 import { ParticipantDto } from './model';
-import { startActiveGroup } from './service';
+import { startActiveGroup, useAsyncError } from './service';
 
 interface ActiveGroupProps {
+    onRefresh?: Function;
     participants?: ParticipantDto[] | undefined
 }
 
 export default function ActiveGroup(props: ActiveGroupProps) {
+    const throwError = useAsyncError();
+    
     let participants = []
     if (props.participants) {
         for (let partipant of props.participants) {
@@ -33,7 +36,11 @@ export default function ActiveGroup(props: ActiveGroupProps) {
     return (<Card>
         <CardContent>
             <Typography variant="h5" component="h2">Active group</Typography>
-            <Button variant="contained"  onClick={() => startActiveGroup()} color="primary">Start</Button>
+            <Button variant="contained"  onClick={() => {
+                startActiveGroup()
+                    .then(() => { if (props.onRefresh) {props.onRefresh()}})
+                    .catch((err) => throwError(err));
+                }} color="primary">Start</Button>
             <Divider />
             {participants}
             {emptyState}
