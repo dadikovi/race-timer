@@ -5,3 +5,7 @@
 .formbox > * {
   margin: 0px 5px !important;  
 }
+
+.MuiCard-root {
+  margin-bottom: 30px;
+}

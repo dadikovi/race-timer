@@ -21,7 +21,7 @@ export default function SegmentCard(props: SegmentCardProps) {
                 aria-controls="panel1a-content"
                 id="panel1a-header">
                 <Box display="flex" alignItems="center">
-                    <Typography variant="h5" component="h2" color="primary">{props.segment.name}</Typography>
+                    <Typography variant="h5" component="h2">{props.segment.name}</Typography>
                     <IconButton size="medium" color="primary" onClick={() => {
                         createGroup(props.segment.id)
                             .then(() => props.onRefresh())

@@ -39,7 +39,7 @@ export default function AdminPanel() {
 
   return(
     <div>
-      <Grid container spacing={3}>
+      <Grid container spacing={1}>
         <Grid item xs={6}>
           <Paper style={{padding: '10px'}}>
             <CreateSegmentForm 

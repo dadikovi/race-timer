@@ -12,11 +12,11 @@ interface ActiveGroupProps {
 export default function ActiveGroup(props: ActiveGroupProps) {
     const throwError = useAsyncError();
 
-    return (<Card>
+    return (<Card elevation = {3}>
         <CardContent>
             <Box display="flex" alignItems="center">
                 <Typography variant="h5" component="h2">Active group</Typography>
-                <IconButton size="medium" color="primary" onClick={() => {
+                <IconButton size="medium" color="secondary" onClick={() => {
                     startActiveGroup()
                         .then(() => { if (props.onRefresh) {props.onRefresh()}})
                         .catch((err) => throwError(err));
