@@ -1,4 +1,17 @@
+import React from 'react'
 import {RaceResultsDo, SegmentDto} from './model'
+
+export const useAsyncError = () => {
+    const [_, setError] = React.useState();
+    return React.useCallback(
+      e => {
+        setError(() => {
+          throw e;
+        });
+      },
+      [setError],
+    );
+  };
 
 async function  execute<RESPONSE>(url: string, method?: string, body?: any): Promise<RESPONSE> {
 
@@ -7,8 +20,14 @@ async function  execute<RESPONSE>(url: string, method?: string, body?: any): Pro
     if (body) {
         init.body = JSON.stringify(body)
     }
+    
+    const response = await fetch(`http://localhost:8010${url}`, init)
 
-    return (await fetch(`http://localhost:8010${url}`, init)).json()
+    if (response.status === 200) {
+        return response.json()
+    } else {
+        throw new Error(`Error while fetching ${url}: ${(await response.text())}`)
+    }
 }
 
 function post<RESPONSE>(url:string, body?: any): Promise<RESPONSE> {
@@ -19,38 +38,36 @@ function get<RESPONSE>(url:string): Promise<RESPONSE> {
     return execute(url);
 }
 
-export function startActiveGroup() {
-    post('/groups/active')
+export async function startActiveGroup() {
+    return post('/groups/active')
 }
 
 export async function createSegment(segmentName: string | undefined): Promise<void> {
-    await post('/segments', {name: segmentName})
+    return post('/segments', {name: segmentName})
 }
 
-export function registerParticipant(startNumber: Number | undefined) {
+export async function registerParticipant(startNumber: Number | undefined) {
     if (!startNumber) {
         return
     }
-    post('/participants', {startNumber: startNumber})
+    return post('/participants', {startNumber: startNumber})
 }
 
-export function finishParticipant(startNumber: Number | undefined) {
+export async function finishParticipant(startNumber: Number | undefined) {
     if (!startNumber) {
         return
     }
-    post(`/participants/${startNumber}`)
+    return post(`/participants/${startNumber}`)
 }
 
-export function createGroup(segmentId: Number | undefined) {
-    post('/groups', {segmentId: segmentId})
+export async function createGroup(segmentId: Number | undefined) {
+    return post('/groups', {segmentId: segmentId})
 }
 
 export async function getResults(): Promise<RaceResultsDo> {
-    const results: RaceResultsDo = await get('/race/results')
-    return results
+    return get('/race/results')
 }
 
 export async function getSegments(): Promise<SegmentDto[]> {
-    const results: SegmentDto[] = await get('/segments')
-    return results
+    return get('/segments')
 }

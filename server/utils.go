@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"strings"
 )
 
 func parseRequestBody(w http.ResponseWriter, r *http.Request, dto interface{}) error {
@@ -24,7 +25,8 @@ func parseRequestBody(w http.ResponseWriter, r *http.Request, dto interface{}) e
 }
 
 func respondWithError(w http.ResponseWriter, code int, message string) {
-	respondWithJSON(w, code, []byte(`{"error": `+message+`}`))
+	message = strings.ReplaceAll(message, "\"", "\\\"")
+	respondWithJSON(w, code, []byte(`{"error": "`+message+`"}`))
 }
 
 func respondWithJSON(w http.ResponseWriter, code int, payload []byte) {

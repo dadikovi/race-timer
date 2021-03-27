@@ -1,11 +1,14 @@
 import AdminPanel from './AdminPanel'
+import ErrorBoundary from './ErrorBoundary'
 import './App.css';
-import { AppBar, Toolbar, Typography } from "@material-ui/core";
+import { AppBar, Toolbar, Typography, Snackbar } from "@material-ui/core";
+import Alert from '@material-ui/lab/Alert';
 
 function App() {
   return (
     <div className="App">
-      <AppBar position="static">
+      <ErrorBoundary>
+        <AppBar position="static">
         <Toolbar>
           <Typography variant="h6">
             race-timer admin client
@@ -15,6 +18,7 @@ function App() {
       <main>
         <AdminPanel></AdminPanel>
       </main>
+      </ErrorBoundary>
     </div>
   );
 }
