@@ -13,8 +13,13 @@ type Race struct {
 
 type RaceResultsDto struct {
 	LastRefresh time.Time
-	ActiveGroup []ParticipantDto    `json:"activeGroup"`
-	Segments    []SegmentResultsDto `json:"segments"`
+	ActiveGroup ActiveGroupResultsDto `json:"activeGroup"`
+	Segments    []SegmentResultsDto   `json:"segments"`
+}
+
+type ActiveGroupResultsDto struct {
+	Group        GroupDto         `json:"group"`
+	Participants []ParticipantDto `json:"participants"`
 }
 
 type SegmentResultsDto struct {
@@ -28,6 +33,7 @@ func GetRaceInstance(db *sql.DB) (Race, error) {
 	var instance = Race{}
 
 	if err := db.QueryRow("SELECT active_group_id FROM races").Scan(&instance.activeGroup.id); err != nil {
+		log.Print("Creating initial Race object")
 		if err := db.QueryRow(
 			"INSERT INTO races(active_group_id) VALUES(NULL) RETURNING active_group_id").Err(); err != nil {
 			log.Panic(err)
@@ -37,9 +43,16 @@ func GetRaceInstance(db *sql.DB) (Race, error) {
 		return instance, nil
 	}
 
-	activeGroup, err := fetchGroupById(db, instance.activeGroup.id)
-	instance.activeGroup = activeGroup
+	err := instance.refreshGroupData(db)
 	return instance, err
+}
+
+func (r *Race) refreshGroupData(db *sql.DB) error {
+	activeGroup, err := fetchGroupById(db, r.activeGroup.id)
+	race := *r
+	race.activeGroup = activeGroup
+	*r = race
+	return err
 }
 
 func (r Race) GetActiveGroup() Group {
@@ -56,6 +69,11 @@ func (r Race) SetActiveGroup(db *sql.DB, group Group) (Race, error) {
 }
 
 func (r *Race) Results(db *sql.DB) (RaceResultsDto, error) {
+
+	if r.GetActiveGroup().Dto().Id < 1 {
+		return r.results, nil
+	}
+
 	err := r.refreshResultsIfNeeded(db)
 	return r.results, err
 }
@@ -63,6 +81,10 @@ func (r *Race) Results(db *sql.DB) (RaceResultsDto, error) {
 func (r *Race) refreshResultsIfNeeded(db *sql.DB) error {
 	if time.Now().UTC().Sub(r.results.LastRefresh) < RACE_RESULTS_CACHE_EVICTION_TIMEOUT {
 		return nil
+	}
+
+	if err := r.refreshGroupData(db); err != nil {
+		return err
 	}
 
 	if err := r.refreshActiveGroupStats(db); err != nil {
@@ -108,7 +130,7 @@ func (r *Race) refreshSegmentsGroupStats(db *sql.DB) error {
 				results.Segments = append(results.Segments, currentSegment)
 			}
 			lastSegment = currentSegment.SegmentName
-			currentSegment = SegmentResultsDto{}
+			currentSegment = SegmentResultsDto{SegmentName: lastSegment}
 		}
 		currentSegment.List = append(currentSegment.List, row)
 	}
@@ -120,7 +142,8 @@ func (r *Race) refreshSegmentsGroupStats(db *sql.DB) error {
 
 func (r *Race) refreshActiveGroupStats(db *sql.DB) error {
 	results := *&r.results
-	results.ActiveGroup = make([]ParticipantDto, 0)
+	results.ActiveGroup.Group = r.activeGroup.Dto()
+	results.ActiveGroup.Participants = make([]ParticipantDto, 0)
 
 	rows, err := db.Query(`
 		SELECT start_number, race_time
@@ -136,7 +159,7 @@ func (r *Race) refreshActiveGroupStats(db *sql.DB) error {
 	for rows.Next() {
 		row := ParticipantDto{}
 		rows.Scan(&row.StartNumber, &row.RaceTimeMs)
-		results.ActiveGroup = append(results.ActiveGroup, row)
+		results.ActiveGroup.Participants = append(results.ActiveGroup.Participants, row)
 	}
 
 	*&r.results = results

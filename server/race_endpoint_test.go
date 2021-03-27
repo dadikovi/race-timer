@@ -13,6 +13,20 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestResultsEndpointWithoutData(t *testing.T) {
+	// given
+	clearTable()
+	refreshRace()
+	var results core.RaceResultsDto
+
+	// when
+	response := callResultsEndpoint(&results)
+	log.Print("get results", response.Body.String())
+
+	// then
+	assert.Equal(t, http.StatusOK, response.Code)
+}
+
 func TestResultsEndpoint(t *testing.T) {
 	// given
 	segmentName := "any-name"
@@ -24,13 +38,13 @@ func TestResultsEndpoint(t *testing.T) {
 	// and
 	clearTable()
 	callCreateSegmentEndpoint(segmentName, &createdSegment)
-	callCreateGroupEndpoint(int(createdSegment.Id), &createdGroup)
+	response := callCreateGroupEndpoint(int(createdSegment.Id), &createdGroup)
 
 	// and we register 3 participants in DESC order
 	callRegisterParticipantEndpoint(createdGroup.Id, 3, &participant)
 	callRegisterParticipantEndpoint(createdGroup.Id, 2, &participant)
 	callRegisterParticipantEndpoint(createdGroup.Id, 1, &participant)
-	callStartActiveGroupEndpoint()
+	response = callStartActiveGroupEndpoint()
 
 	// and run forest run
 	callParticipantFinishedEndpoint(1, &participant)
@@ -40,12 +54,14 @@ func TestResultsEndpoint(t *testing.T) {
 	callParticipantFinishedEndpoint(3, &participant)
 
 	// when
-	response := callResultsEndpoint(&results)
-	log.Print(response.Body.String())
+	response = callResultsEndpoint(&results)
 
 	// then
 	assert.Equal(t, http.StatusOK, response.Code)
-	assert.Equal(t, len(results.ActiveGroup), 3)
+	assert.Equal(t, len(results.ActiveGroup.Participants), 3)
+	assert.Equal(t, createdGroup.Id, results.ActiveGroup.Group.Id)
+	assert.Equal(t, createdGroup.SegmentId, results.ActiveGroup.Group.SegmentId)
+	assert.True(t, createdGroup.Start.Before(results.ActiveGroup.Group.Start))
 	assert.Equal(t, len(results.Segments), 1)
 	assert.Equal(t, results.Segments[0].SegmentName, segmentName)
 	assert.Equal(t, len(results.Segments[0].List), 3)

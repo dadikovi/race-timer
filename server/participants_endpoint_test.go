@@ -98,7 +98,7 @@ type ParticipantDao struct {
 }
 
 func callParticipantFinishedEndpoint(startNumber int, responseDto interface{}) *httptest.ResponseRecorder {
-	req, _ := http.NewRequest("PUT", `/participants/`+fmt.Sprint(startNumber), bytes.NewBufferString(`{}`))
+	req, _ := http.NewRequest("POST", `/participants/`+fmt.Sprint(startNumber), bytes.NewBufferString(`{}`))
 	req.Header.Set("Content-Type", "application/json")
 
 	response := executeRequest(req)
