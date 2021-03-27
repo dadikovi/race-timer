@@ -10,6 +10,9 @@ func (a *App) fetchAllSegment(w http.ResponseWriter, r *http.Request) {
 
 	segments, err := core.FetchAll(a.DB)
 	respondWithClientError(w, err)
+	if err != nil {
+		return
+	}
 
 	var results []core.SegmentDto
 	for _, s := range segments {
