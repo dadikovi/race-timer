@@ -12,7 +12,11 @@ function refresh(setResults: Function, setSegments: Function) {
   getSegments().then(segments => setSegments(segments));  
 }
 
-export default function AdminPanel() {
+interface AdminPanelProps {
+  displayAdminFeatures: boolean
+}
+
+export default function AdminPanel(props: AdminPanelProps) {
 
   const [segments, setSegments] = useState<SegmentDto[] | undefined>();
   const [results, setResults] = useState<RaceResultsDo | undefined>();
@@ -24,21 +28,16 @@ export default function AdminPanel() {
   }, []);
   
   let segmentCards = []
-  let activeGroup = <ActiveGroup></ActiveGroup>
-
-  if (results && results.activeGroup) {
-    activeGroup = <ActiveGroup participants={results.activeGroup}></ActiveGroup>
-  }
-
   if (segments) {
     for (let segment of segments) {
-      segmentCards.push(<SegmentCard onRefresh={callRefresh} segment={segment}></SegmentCard>)
+      segmentCards.push(<SegmentCard key={segment.name} onRefresh={callRefresh} segment={segment} 
+        participants={results?.segments.filter(s => s.segmentName === segment.name)[0].participants}></SegmentCard>)
     }
   }
 
   return(
     <div>
-      <Grid container spacing={3}>
+      {props.displayAdminFeatures && <Grid container spacing={1}>
         <Grid item xs={6}>
           <Paper style={{padding: '10px'}}>
             <CreateSegmentForm 
@@ -46,14 +45,14 @@ export default function AdminPanel() {
           </Paper>
         </Grid>
         <Grid item xs={6}>
-          <Paper style={{padding: '10px'}}>
+          <Paper color="error.light" style={{padding: '10px'}}>
             <ScannerMock mockChanged={callRefresh}></ScannerMock>
           </Paper>
         </Grid>
-      </Grid>
+      </Grid>}
       
+      {props.displayAdminFeatures && <ActiveGroup participants={results?.activeGroup}></ActiveGroup>}
       
-      {activeGroup}
       {segmentCards}
     </div>
   );

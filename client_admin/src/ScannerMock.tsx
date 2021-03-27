@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import { TextField, Button } from "@material-ui/core";
+import { TextField, Button, Box } from "@material-ui/core";
 import { registerParticipant, finishParticipant, useAsyncError } from './service';
 
 interface ScannerMockProps {
@@ -10,8 +10,8 @@ export default function ScannerMock(props: ScannerMockProps) {
   const throwError = useAsyncError();
   
   return(
-    <div>
-      <TextField variant="filled" label='Starting number' onChange={e => setStartingNumber(Number(e.target.value))} value={startingNumber}></TextField>
+    <Box className="formbox" display="flex" alignItems="center">
+      <TextField margin="dense" color = "secondary" variant="outlined" label='Starting number' onChange={e => setStartingNumber(Number(e.target.value))} value={startingNumber}></TextField>
       <Button variant="contained" color="secondary" 
         onClick={ () => {
            registerParticipant(startingNumber)
@@ -28,6 +28,6 @@ export default function ScannerMock(props: ScannerMockProps) {
         } }>
         Finish
       </Button>
-    </div>
+    </Box>
   );
 }

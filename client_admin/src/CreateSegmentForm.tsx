@@ -1,4 +1,4 @@
-import { Button, TextField } from '@material-ui/core';
+import { Button, TextField, Box } from '@material-ui/core';
 import React, {useState} from 'react';
 import { createSegment, useAsyncError } from './service';
 
@@ -12,8 +12,8 @@ export default function CreateSegmentForm(props: CreateSegmentFormProps) {
   const throwError = useAsyncError();
 
   return(
-    <div>
-      <TextField variant="filled" label='New segment name' onChange={e => setSegmentName(e.target.value)} value={segmentName}></TextField>
+    <Box className="formbox" display="flex" alignItems="center">
+      <TextField margin="dense" variant="outlined" label='New segment name' onChange={e => setSegmentName(e.target.value)} value={segmentName}></TextField>
       <Button variant="contained"  
         onClick={() => {
           createSegment(segmentName)
@@ -24,6 +24,6 @@ export default function CreateSegmentForm(props: CreateSegmentFormProps) {
         Create
       </Button>
       <Button variant="outlined"  onClick={() => props.onRefresh()} color="primary">Refresh</Button>
-    </div>
+    </Box>
   );
 }

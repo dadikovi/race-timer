@@ -2,14 +2,10 @@
   padding: 20px;
 }
 
-button {
-  margin: 0px 5px !important;
+.formbox > * {
+  margin: 0px 5px !important;  
 }
 
-hr {
-  margin: 10px 0px !important;
-}
-
-.MuiChip-root {
-  margin: 0px 2px !important;
+.MuiCard-root {
+  margin-bottom: 30px;
 }
