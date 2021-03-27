@@ -5,7 +5,7 @@ import SegmentCard from './SegmentCard';
 import ScannerMock from './ScannerMock';
 import RefreshForm from './RefreshForm';
 import { SegmentDto, RaceResultsDo } from './model';
-import { Grid, Paper } from "@material-ui/core";
+import { Box, CardContent, Divider, Card } from "@material-ui/core";
 import {getResults, getSegments} from './service';
 
 function refresh(setResults: Function, setSegments: Function) {
@@ -38,25 +38,19 @@ export default function AdminPanel(props: AdminPanelProps) {
 
   return(
     <div>
-      {props.displayAdminFeatures && <Grid container spacing={1}>
-        <Grid item xs={4}>
-          <Paper style={{padding: '10px'}}>
+      {props.displayAdminFeatures && <Card elevation = {3}>
+        <CardContent>
+          <Box className="formbox" display="flex" alignItems="center">
             <CreateSegmentForm 
               onRefresh={callRefresh}/>
-          </Paper>
-        </Grid>
-        <Grid item xs={4}>
-          <Paper style={{padding: '10px'}}>
+            <Divider orientation="vertical" flexItem />
             <RefreshForm 
               onRefresh={callRefresh}/>
-          </Paper>
-        </Grid>
-        <Grid item xs={4}>
-          <Paper color="error.light" style={{padding: '10px'}}>
+            <Divider orientation="vertical" flexItem />
             <ScannerMock mockChanged={callRefresh}></ScannerMock>
-          </Paper>
-        </Grid>
-      </Grid>}
+          </Box>
+        </CardContent>
+        </Card>}
       
       {props.displayAdminFeatures && <ActiveGroup participants={results?.activeGroup}></ActiveGroup>}
       
