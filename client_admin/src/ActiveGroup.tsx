@@ -1,16 +1,14 @@
 import { Card, Chip, CardContent, Typography, Button, Divider } from "@material-ui/core";
-import FaceIcon from '@material-ui/icons/Face';
 import DoneIcon from '@material-ui/icons/Done';
 import DirectionsRunIcon from '@material-ui/icons/DirectionsRun';
+import { ParticipantDto } from './model';
+import { startActiveGroup } from './service';
 
-function startActiveGroup() {
-    fetch("http://localhost:8010/groups/active", {
-        method: 'POST',
-        body: JSON.stringify({dummy: 'dummy'})
-    });
+interface ActiveGroupProps {
+    participants?: ParticipantDto[] | undefined
 }
 
-export default function ActiveGroup(props) {
+export default function ActiveGroup(props: ActiveGroupProps) {
     let participants = []
     if (props.participants) {
         for (let partipant of props.participants) {

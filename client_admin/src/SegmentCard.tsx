@@ -1,16 +1,13 @@
 import React from 'react';
 import { Accordion, AccordionDetails, AccordionSummary, Typography, Button } from "@material-ui/core";
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import { SegmentDto } from './model';
+import { createGroup } from './service';
 
-function createGroup(segmentId) {
-    fetch("http://localhost:8010/groups", {
-        method: 'POST',
-        body: JSON.stringify({segmentId: segmentId})
-    });
+interface SegmentCardProps {
+    segment: SegmentDto;
 }
-
-export default function SegmentCard(props) {
-    console.log(JSON.stringify(props))
+export default function SegmentCard(props: SegmentCardProps) {
     return(
         <Accordion style={{margin: '5px 0px'}}>
             <AccordionSummary
