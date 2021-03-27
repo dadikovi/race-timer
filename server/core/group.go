@@ -12,8 +12,9 @@ type Group struct {
 }
 
 type GroupDto struct {
-	Id        int `json:"id"`
-	SegmentId int `json:"segmentId"`
+	Id        int       `json:"id"`
+	Start     time.Time `json:"start"`
+	SegmentId int       `json:"segmentId"`
 }
 
 func MakeGroupForSegment(segment Segment) Group {
@@ -61,5 +62,5 @@ func (g Group) StartGroup(db *sql.DB) (Group, error) {
 }
 
 func (g *Group) Dto() GroupDto {
-	return GroupDto{g.id, g.parentSegment.id}
+	return GroupDto{g.id, g.start, g.parentSegment.id}
 }
