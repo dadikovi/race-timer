@@ -130,7 +130,7 @@ func (r *Race) refreshSegmentsGroupStats(db *sql.DB) error {
 				results.Segments = append(results.Segments, currentSegment)
 			}
 			lastSegment = currentSegment.SegmentName
-			currentSegment = SegmentResultsDto{}
+			currentSegment = SegmentResultsDto{SegmentName: lastSegment}
 		}
 		currentSegment.List = append(currentSegment.List, row)
 	}
