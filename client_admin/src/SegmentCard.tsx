@@ -1,5 +1,5 @@
 import React from 'react';
-import { Accordion, AccordionDetails, AccordionSummary, Typography, Button, IconButton, Box } from "@material-ui/core";
+import { Accordion, AccordionDetails, AccordionSummary, Typography, IconButton, Box } from "@material-ui/core";
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import AddCircleIcon from '@material-ui/icons/AddCircle';
 import { ParticipantDto, SegmentDto } from './model';

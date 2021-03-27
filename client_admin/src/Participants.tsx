@@ -18,6 +18,7 @@ export default function Participants(props: ParticipantsProps) {
             label += ` (${partipant.raceTimeMs / 1000} s)`
         }
         participants.push(<Chip
+            key={label}
             variant="outlined"
             icon={icon}
             label={label}
