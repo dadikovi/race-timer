@@ -6,11 +6,12 @@ import ScannerMock from './ScannerMock';
 import RefreshForm from './RefreshForm';
 import { SegmentDto, RaceResultsDo } from './model';
 import { Box, CardContent, Divider, Card } from "@material-ui/core";
-import {getResults, getSegments} from './service';
+import {getResults, getSegments, useAsyncError} from './service';
 
-function refresh(setResults: Function, setSegments: Function) {
-  getResults().then(raceResults => setResults(raceResults));
+function refresh(setResults: Function, setSegments: Function): Promise<any> {
   getSegments().then(segments => setSegments(segments));  
+  return getResults()
+    .then(raceResults => setResults(raceResults))
 }
 
 interface AdminPanelProps {
@@ -21,8 +22,9 @@ export default function AdminPanel(props: AdminPanelProps) {
 
   const [segments, setSegments] = useState<SegmentDto[] | undefined>();
   const [results, setResults] = useState<RaceResultsDo | undefined>();
+  const throwError = useAsyncError();
 
-  const callRefresh = () => refresh(setResults, setSegments);
+  const callRefresh = () => refresh(setResults, setSegments).catch(err => throwError(err))
 
   useEffect(() => {
     refresh(setResults, setSegments)
@@ -32,7 +34,7 @@ export default function AdminPanel(props: AdminPanelProps) {
   if (segments) {
     for (let segment of segments) {
       segmentCards.push(<SegmentCard key={segment.name} onRefresh={callRefresh} segment={segment} 
-        participants={results?.segments.filter(s => s.segmentName === segment.name)[0]?.participants}></SegmentCard>)
+        participants={results?.segments?.filter(s => s.segmentName === segment.name)[0]?.participants}></SegmentCard>)
     }
   }
 

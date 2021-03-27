@@ -10,12 +10,12 @@ export interface GroupDto {
 
 export interface ActiveGroupResultsDto {
     group: GroupDto
-    participants: ParticipantDto[];
+    participants?: ParticipantDto[];
 }
 
 export interface RaceResultsDo {
     activeGroup: ActiveGroupResultsDto;
-    segments: SegmentResultsDto[];
+    segments?: SegmentResultsDto[];
 }
 
 export interface SegmentResultsDto {

@@ -69,7 +69,6 @@ func (r Race) SetActiveGroup(db *sql.DB, group Group) (Race, error) {
 }
 
 func (r *Race) Results(db *sql.DB) (RaceResultsDto, error) {
-	log.Print("Group when result asked", r.GetActiveGroup().Dto())
 
 	if r.GetActiveGroup().Dto().Id < 1 {
 		return r.results, nil
