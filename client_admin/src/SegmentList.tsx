@@ -1,91 +1,93 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ActiveGroup from './ActiveGroup';
 import CreateSegmentForm from './CreateSegmentForm'
 import SegmentCard from './SegmentCard';
 import ScannerMock from './ScannerMock';
 import { Grid, Paper } from "@material-ui/core";
 
-interface SegmentListState {
-  results: any;
-  segments: any[];
+interface SegmentDto {
+  name: string;
+  id: Number;
 }
 
-export default class SegmentList extends React.Component {
+interface RaceResultstDo {
+  activeGroup: ParticipantDto[];
+  segments: SegmentResultsDto[];
+}
 
-  state: SegmentListState
+interface SegmentResultsDto {
+  segmentName: string;
+  participants: ParticipantDto[];
+}
 
-  constructor(props: any) {
-    super(props);
-    this.state = {
-      results: {},
-      segments: []
-    };
+interface ParticipantDto {
+  startNumber: Number;
+  groupId: Number;
+  raceTimeMs: Number;
+}
 
-    this.getSegments = this.getSegments.bind(this);
-    this.refresh = this.refresh.bind(this);
-    this.refresh();
-  }
+function getResults(setResults: Function) {
+  fetch("http://localhost:8010/race/results") 
+  .then(res => res.json())
+  .then(
+    (result) => { setResults(result) }
+  )
+}
 
-  refresh() {
-    this.getSegments();
-    this.getResults();
-  }
-
-  getResults() {
-    fetch("http://localhost:8010/race/results") 
+function getSegments(setSegments: Function) {
+  fetch("http://localhost:8010/segments") 
     .then(res => res.json())
     .then(
-      (result) => {
-        this.setState({
-          results: result
-        })
-      }
+      (result) => { setSegments(result) }
     )
+}
+
+function refresh(setResults: Function, setSegments: Function) {
+  getResults(setResults);
+  getSegments(setSegments);
+}
+
+export default function SegmentList(props: any) {
+
+  const [segments, setSegments] = useState<SegmentDto[] | undefined>();
+  const [results, setResults] = useState<RaceResultstDo | undefined>();
+
+  // this.refresh();
+  
+  let segmentCards = []
+  let activeGroup = <ActiveGroup></ActiveGroup>
+
+  if (results && results.activeGroup) {
+    activeGroup = <ActiveGroup participants={results.activeGroup}></ActiveGroup>
   }
 
-  getSegments() {
-    fetch("http://localhost:8010/segments") 
-      .then(res => res.json())
-      .then(
-        (result) => {
-          this.setState({
-            segments: result
-          })
-        }
-      )
-  }
-
-  render() {
-    let segmentCards = []
-    let activeGroup = <ActiveGroup></ActiveGroup>
-
-    if (this.state.results && this.state.results.activeGroup) {
-      activeGroup = <ActiveGroup participants={this.state.results.activeGroup}></ActiveGroup>
-    }
-
-    for (let segment of this.state.segments) {
+  if (segments) {
+    for (let segment of segments) {
       segmentCards.push(<SegmentCard segment={segment}></SegmentCard>)
     }
-
-    return(
-      <div>
-        <Grid container spacing={3}>
-          <Grid item xs={6}>
-            <Paper style={{padding: '10px'}}>
-              <CreateSegmentForm onRefresh={this.refresh} onSegmentCreated={this.getSegments}></CreateSegmentForm>
-            </Paper>
-          </Grid>
-          <Grid item xs={6}>
-            <Paper style={{padding: '10px'}}>
-              <ScannerMock></ScannerMock>
-            </Paper>
-          </Grid>
-        </Grid>
-        
-        
-        {activeGroup}
-        {segmentCards}
-      </div>
-    );
   }
+
+  return(
+    <div>
+      <Grid container spacing={3}>
+        <Grid item xs={6}>
+          <Paper style={{padding: '10px'}}>
+            <CreateSegmentForm 
+              onRefresh={() => refresh(setResults, setSegments)} 
+              onSegmentCreated={() => getSegments(setSegments)}>
+            </CreateSegmentForm>
+          </Paper>
+        </Grid>
+        <Grid item xs={6}>
+          <Paper style={{padding: '10px'}}>
+            <ScannerMock></ScannerMock>
+          </Paper>
+        </Grid>
+      </Grid>
+      
+      
+      {activeGroup}
+      {segmentCards}
+    </div>
+  );
 }
