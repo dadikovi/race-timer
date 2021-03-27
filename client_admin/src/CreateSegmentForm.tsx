@@ -12,34 +12,8 @@ let autoRefreshTimer: NodeJS.Timeout
 
 export default function CreateSegmentForm(props: CreateSegmentFormProps) {
 
-  const [segmentName, setSegmentName] = useState<string | undefined>();
-  const [autoRefresh, setAutoRefresh] = useState<boolean>(false);
-  
+  const [segmentName, setSegmentName] = useState<string | undefined>();  
   const throwError = useAsyncError();
-
-  const autoRefreshIcon = autoRefresh ? <SyncIcon /> : <SyncDisabledIcon />
-  const autoRefreshVariant = autoRefresh ? 'contained' : 'outlined'
-
-  const doAutoRefresh = () => {
-    autoRefreshTimer = setTimeout(() => {
-      props.onRefresh()
-      doAutoRefresh()
-    }, 1000);
-  }
-
-  const cleanAutoRefresh = () => {
-    clearTimeout(autoRefreshTimer)
-  }
-
-  const toggleAutoRefresh = () => {
-    if (autoRefresh) {
-      cleanAutoRefresh()
-      setAutoRefresh(false)
-    } else {
-      setAutoRefresh(true)
-      doAutoRefresh()
-    }
-  }
 
   return(
     <Box className="formbox" display="flex" alignItems="center">
@@ -53,11 +27,6 @@ export default function CreateSegmentForm(props: CreateSegmentFormProps) {
         color="primary">
         Create
       </Button>
-
-      <ButtonGroup color="primary">
-        <Button variant="outlined"  onClick={() => props.onRefresh()}>Refresh</Button>
-        <Button variant={autoRefreshVariant} endIcon={autoRefreshIcon} onClick={toggleAutoRefresh}></Button>
-      </ButtonGroup>
     </Box>
   );
 }
