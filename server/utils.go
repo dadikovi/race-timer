@@ -40,6 +40,7 @@ func respondWithDto(w http.ResponseWriter, dto interface{}) {
 	j, err := json.Marshal(dto)
 	if err != nil {
 		respondWithError(w, http.StatusInternalServerError, err.Error())
+		return
 	}
 	respondWithJSON(w, http.StatusOK, j)
 }
