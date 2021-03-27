@@ -78,7 +78,7 @@ type GroupDao struct {
 }
 
 func callStartActiveGroupEndpoint() *httptest.ResponseRecorder {
-	req, _ := http.NewRequest("PUT", "/groups/active", bytes.NewBufferString(``))
+	req, _ := http.NewRequest("POST", "/groups/active", bytes.NewBufferString(``))
 	req.Header.Set("Content-Type", "application/json")
 	return executeRequest(req)
 }

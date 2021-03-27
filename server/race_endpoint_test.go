@@ -45,7 +45,7 @@ func TestResultsEndpoint(t *testing.T) {
 
 	// then
 	assert.Equal(t, http.StatusOK, response.Code)
-	assert.Equal(t, len(results.ActiveGroup), 3)
+	assert.Equal(t, len(results.ActiveGroup.Participants), 3)
 	assert.Equal(t, len(results.Segments), 1)
 	assert.Equal(t, results.Segments[0].SegmentName, segmentName)
 	assert.Equal(t, len(results.Segments[0].List), 3)

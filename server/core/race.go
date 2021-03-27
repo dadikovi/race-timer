@@ -13,8 +13,13 @@ type Race struct {
 
 type RaceResultsDto struct {
 	LastRefresh time.Time
-	ActiveGroup []ParticipantDto    `json:"activeGroup"`
-	Segments    []SegmentResultsDto `json:"segments"`
+	ActiveGroup ActiveGroupResultsDto `json:"activeGroup"`
+	Segments    []SegmentResultsDto   `json:"segments"`
+}
+
+type ActiveGroupResultsDto struct {
+	Group        GroupDto         `json:"group"`
+	Participants []ParticipantDto `json:"participants"`
 }
 
 type SegmentResultsDto struct {
@@ -120,7 +125,7 @@ func (r *Race) refreshSegmentsGroupStats(db *sql.DB) error {
 
 func (r *Race) refreshActiveGroupStats(db *sql.DB) error {
 	results := *&r.results
-	results.ActiveGroup = make([]ParticipantDto, 0)
+	results.ActiveGroup.Participants = make([]ParticipantDto, 0)
 
 	rows, err := db.Query(`
 		SELECT start_number, race_time
@@ -136,7 +141,7 @@ func (r *Race) refreshActiveGroupStats(db *sql.DB) error {
 	for rows.Next() {
 		row := ParticipantDto{}
 		rows.Scan(&row.StartNumber, &row.RaceTimeMs)
-		results.ActiveGroup = append(results.ActiveGroup, row)
+		results.ActiveGroup.Participants = append(results.ActiveGroup.Participants, row)
 	}
 
 	*&r.results = results
