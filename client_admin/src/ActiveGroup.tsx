@@ -1,5 +1,4 @@
 import { Card, Chip, CardContent, Typography, Button, Divider } from "@material-ui/core";
-import FaceIcon from '@material-ui/icons/Face';
 import DoneIcon from '@material-ui/icons/Done';
 import DirectionsRunIcon from '@material-ui/icons/DirectionsRun';
 
@@ -10,7 +9,7 @@ function startActiveGroup() {
     });
 }
 
-export default function ActiveGroup(props) {
+export default function ActiveGroup(props: any) {
     let participants = []
     if (props.participants) {
         for (let partipant of props.participants) {

@@ -5,9 +5,16 @@ import SegmentCard from './SegmentCard';
 import ScannerMock from './ScannerMock';
 import { Grid, Paper } from "@material-ui/core";
 
+interface SegmentListState {
+  results: any;
+  segments: any[];
+}
+
 export default class SegmentList extends React.Component {
 
-  constructor(props) {
+  state: SegmentListState
+
+  constructor(props: any) {
     super(props);
     this.state = {
       results: {},
