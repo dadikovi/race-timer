@@ -32,7 +32,7 @@ export default function AdminPanel(props: AdminPanelProps) {
   if (segments) {
     for (let segment of segments) {
       segmentCards.push(<SegmentCard key={segment.name} onRefresh={callRefresh} segment={segment} 
-        participants={results?.segments.filter(s => s.segmentName === segment.name)[0].participants}></SegmentCard>)
+        participants={results?.segments.filter(s => s.segmentName === segment.name)[0]?.participants}></SegmentCard>)
     }
   }
 
@@ -52,7 +52,7 @@ export default function AdminPanel(props: AdminPanelProps) {
         </CardContent>
         </Card>}
       
-      {props.displayAdminFeatures && <ActiveGroup participants={results?.activeGroup}></ActiveGroup>}
+      {props.displayAdminFeatures && <ActiveGroup onRefresh={callRefresh} data={results?.activeGroup}></ActiveGroup>}
       
       {segmentCards}
     </div>

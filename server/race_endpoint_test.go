@@ -24,13 +24,15 @@ func TestResultsEndpoint(t *testing.T) {
 	// and
 	clearTable()
 	callCreateSegmentEndpoint(segmentName, &createdSegment)
-	callCreateGroupEndpoint(int(createdSegment.Id), &createdGroup)
+	response := callCreateGroupEndpoint(int(createdSegment.Id), &createdGroup)
+	log.Print("Create active group", response.Body.String())
 
 	// and we register 3 participants in DESC order
 	callRegisterParticipantEndpoint(createdGroup.Id, 3, &participant)
 	callRegisterParticipantEndpoint(createdGroup.Id, 2, &participant)
 	callRegisterParticipantEndpoint(createdGroup.Id, 1, &participant)
-	callStartActiveGroupEndpoint()
+	response = callStartActiveGroupEndpoint()
+	log.Print("Start active group", response.Body.String())
 
 	// and run forest run
 	callParticipantFinishedEndpoint(1, &participant)
@@ -40,13 +42,15 @@ func TestResultsEndpoint(t *testing.T) {
 	callParticipantFinishedEndpoint(3, &participant)
 
 	// when
-	response := callResultsEndpoint(&results)
-	log.Print(response.Body.String())
+	response = callResultsEndpoint(&results)
+	log.Print("Final call", response.Body.String())
 
 	// then
 	assert.Equal(t, http.StatusOK, response.Code)
 	assert.Equal(t, len(results.ActiveGroup.Participants), 3)
-	assert.Equal(t, createdGroup, results.ActiveGroup.Group)
+	assert.Equal(t, createdGroup.Id, results.ActiveGroup.Group.Id)
+	assert.Equal(t, createdGroup.SegmentId, results.ActiveGroup.Group.SegmentId)
+	assert.True(t, createdGroup.Start.Before(results.ActiveGroup.Group.Start))
 	assert.Equal(t, len(results.Segments), 1)
 	assert.Equal(t, results.Segments[0].SegmentName, segmentName)
 	assert.Equal(t, len(results.Segments[0].List), 3)

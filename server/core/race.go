@@ -42,9 +42,16 @@ func GetRaceInstance(db *sql.DB) (Race, error) {
 		return instance, nil
 	}
 
-	activeGroup, err := fetchGroupById(db, instance.activeGroup.id)
-	instance.activeGroup = activeGroup
+	err := instance.refreshGroupData(db)
 	return instance, err
+}
+
+func (r *Race) refreshGroupData(db *sql.DB) error {
+	activeGroup, err := fetchGroupById(db, r.activeGroup.id)
+	race := *r
+	race.activeGroup = activeGroup
+	*r = race
+	return err
 }
 
 func (r Race) GetActiveGroup() Group {
@@ -68,6 +75,10 @@ func (r *Race) Results(db *sql.DB) (RaceResultsDto, error) {
 func (r *Race) refreshResultsIfNeeded(db *sql.DB) error {
 	if time.Now().UTC().Sub(r.results.LastRefresh) < RACE_RESULTS_CACHE_EVICTION_TIMEOUT {
 		return nil
+	}
+
+	if err := r.refreshGroupData(db); err != nil {
+		return err
 	}
 
 	if err := r.refreshActiveGroupStats(db); err != nil {
