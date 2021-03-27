@@ -1,3 +1,5 @@
+import {RaceResultsDo, SegmentDto} from './model'
+
 async function  execute<RESPONSE>(url: string, method?: string, body?: any): Promise<RESPONSE> {
 
     let init: RequestInit = { method : method }
@@ -21,61 +23,34 @@ export function startActiveGroup() {
     post('/groups/active')
 }
 
-export function createSegment(segmentName: string | undefined, onSegmentCreated: Function | undefined) {
-    fetch("http://localhost:8010/segments", {
-      method: 'POST',
-      body: JSON.stringify({name: segmentName})
-    }) 
-      .then(res => res.json())
-      .then(
-        () => {
-          if (onSegmentCreated !== undefined) {
-            onSegmentCreated()
-          }
-        },
-        (error) => {
-        }
-      )
+export async function createSegment(segmentName: string | undefined): Promise<void> {
+    await post('/segments', {name: segmentName})
 }
 
 export function registerParticipant(startNumber: Number | undefined) {
     if (!startNumber) {
-    return
+        return
     }
-    fetch("http://localhost:8010/participants", {
-    method: 'POST',
-    body: JSON.stringify({startNumber: startNumber})
-    });
+    post('/participants', {startNumber: startNumber})
 }
 
 export function finishParticipant(startNumber: Number | undefined) {
     if (!startNumber) {
         return
     }
-    fetch(`http://localhost:8010/participants/${startNumber}`, {
-        method: 'POST'
-    });
+    post(`/participants/${startNumber}`)
 }
 
 export function createGroup(segmentId: Number | undefined) {
-    fetch("http://localhost:8010/groups", {
-        method: 'POST',
-        body: JSON.stringify({segmentId: segmentId})
-    });
+    post('/groups', {segmentId: segmentId})
 }
 
-export function getResults(setResults: Function) {
-  fetch("http://localhost:8010/race/results") 
-  .then(res => res.json())
-  .then(
-    (result) => { setResults(result) }
-  )
+export async function getResults(): Promise<RaceResultsDo> {
+    const results: RaceResultsDo = await get('/race/results')
+    return results
 }
 
-export function getSegments(setSegments: Function) {
-  fetch("http://localhost:8010/segments") 
-    .then(res => res.json())
-    .then(
-      (result) => { setSegments(result) }
-    )
+export async function getSegments(): Promise<SegmentDto[]> {
+    const results: SegmentDto[] = await get('/segments')
+    return results
 }

@@ -14,7 +14,16 @@ export default function CreateSegmentForm(props: CreateSegmentFormProps) {
   return(
     <div>
       <TextField variant="filled" label='New segment name' onChange={e => setSegmentName(e.target.value)} value={segmentName}></TextField>
-      <Button variant="contained"  onClick={() => createSegment(segmentName, props.onSegmentCreated)} color="primary">Create</Button>
+      <Button variant="contained"  
+        onClick={() => {
+          createSegment(segmentName)
+          if (props.onSegmentCreated !== undefined) {
+            props.onSegmentCreated()
+          }
+        }} 
+        color="primary">
+        Create
+      </Button>
       <Button variant="outlined"  onClick={() => props.onRefresh()} color="primary">Refresh</Button>
     </div>
   );

@@ -7,9 +7,11 @@ import { SegmentDto, RaceResultsDo } from './model';
 import { Grid, Paper } from "@material-ui/core";
 import {getResults, getSegments} from './service';
 
-function refresh(setResults: Function, setSegments: Function) {
-  getResults(setResults);
-  getSegments(setSegments);
+async function refresh(setResults: Function, setSegments: Function) {
+  const raceResults = await getResults();
+  setResults(raceResults)
+  const segments = await getSegments();
+  setSegments(segments)
 }
 
 
@@ -18,7 +20,7 @@ export default function AdminPanel() {
   const [segments, setSegments] = useState<SegmentDto[] | undefined>();
   const [results, setResults] = useState<RaceResultsDo | undefined>();
 
-  // this.refresh();
+  // this.refresh(); TODO better refreshing
   
   let segmentCards = []
   let activeGroup = <ActiveGroup></ActiveGroup>
@@ -40,7 +42,10 @@ export default function AdminPanel() {
           <Paper style={{padding: '10px'}}>
             <CreateSegmentForm 
               onRefresh={() => refresh(setResults, setSegments)} 
-              onSegmentCreated={() => getSegments(setSegments)} />
+              onSegmentCreated={async () => {
+                const segments = await getSegments();
+                setSegments(segments)
+              }} />
           </Paper>
         </Grid>
         <Grid item xs={6}>
