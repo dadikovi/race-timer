@@ -1,6 +1,7 @@
 import { Card, Chip, CardContent, Typography, Button, Divider } from "@material-ui/core";
 import DoneIcon from '@material-ui/icons/Done';
 import DirectionsRunIcon from '@material-ui/icons/DirectionsRun';
+import { ParticipantDto } from './model';
 
 function startActiveGroup() {
     fetch("http://localhost:8010/groups/active", {
@@ -9,7 +10,11 @@ function startActiveGroup() {
     });
 }
 
-export default function ActiveGroup(props: any) {
+interface ActiveGroupProps {
+    participants?: ParticipantDto[] | undefined
+}
+
+export default function ActiveGroup(props: ActiveGroupProps) {
     let participants = []
     if (props.participants) {
         for (let partipant of props.participants) {

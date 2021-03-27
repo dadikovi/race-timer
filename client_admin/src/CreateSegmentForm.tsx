@@ -18,7 +18,11 @@ function createSegment(segmentName: string | undefined, onSegmentCreated: Functi
     )
 }
 
-export default function CreateSegmentForm(props: any) {
+interface CreateSegmentFormProps {
+  onRefresh: Function;
+  onSegmentCreated: Function;
+}
+export default function CreateSegmentForm(props: CreateSegmentFormProps) {
 
   const [segmentName, setSegmentName] = useState<string | undefined>();
 

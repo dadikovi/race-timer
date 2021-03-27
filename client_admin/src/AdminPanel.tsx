@@ -3,28 +3,8 @@ import ActiveGroup from './ActiveGroup';
 import CreateSegmentForm from './CreateSegmentForm'
 import SegmentCard from './SegmentCard';
 import ScannerMock from './ScannerMock';
+import { SegmentDto, RaceResultsDo } from './model';
 import { Grid, Paper } from "@material-ui/core";
-
-interface SegmentDto {
-  name: string;
-  id: Number;
-}
-
-interface RaceResultstDo {
-  activeGroup: ParticipantDto[];
-  segments: SegmentResultsDto[];
-}
-
-interface SegmentResultsDto {
-  segmentName: string;
-  participants: ParticipantDto[];
-}
-
-interface ParticipantDto {
-  startNumber: Number;
-  groupId: Number;
-  raceTimeMs: Number;
-}
 
 function getResults(setResults: Function) {
   fetch("http://localhost:8010/race/results") 
@@ -47,10 +27,11 @@ function refresh(setResults: Function, setSegments: Function) {
   getSegments(setSegments);
 }
 
-export default function AdminPanel(props: any) {
+
+export default function AdminPanel() {
 
   const [segments, setSegments] = useState<SegmentDto[] | undefined>();
-  const [results, setResults] = useState<RaceResultstDo | undefined>();
+  const [results, setResults] = useState<RaceResultsDo | undefined>();
 
   // this.refresh();
   
@@ -74,8 +55,7 @@ export default function AdminPanel(props: any) {
           <Paper style={{padding: '10px'}}>
             <CreateSegmentForm 
               onRefresh={() => refresh(setResults, setSegments)} 
-              onSegmentCreated={() => getSegments(setSegments)}>
-            </CreateSegmentForm>
+              onSegmentCreated={() => getSegments(setSegments)} />
           </Paper>
         </Grid>
         <Grid item xs={6}>
