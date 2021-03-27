@@ -61,6 +61,6 @@ func (g Group) StartGroup(db *sql.DB) (Group, error) {
 	return g, err
 }
 
-func (g *Group) Dto() GroupDto {
+func (g Group) Dto() GroupDto {
 	return GroupDto{g.id, g.start, g.parentSegment.id}
 }

@@ -33,6 +33,7 @@ func GetRaceInstance(db *sql.DB) (Race, error) {
 	var instance = Race{}
 
 	if err := db.QueryRow("SELECT active_group_id FROM races").Scan(&instance.activeGroup.id); err != nil {
+		log.Print("Creating initial Race object")
 		if err := db.QueryRow(
 			"INSERT INTO races(active_group_id) VALUES(NULL) RETURNING active_group_id").Err(); err != nil {
 			log.Panic(err)
@@ -68,6 +69,12 @@ func (r Race) SetActiveGroup(db *sql.DB, group Group) (Race, error) {
 }
 
 func (r *Race) Results(db *sql.DB) (RaceResultsDto, error) {
+	log.Print("Group when result asked", r.GetActiveGroup().Dto())
+
+	if r.GetActiveGroup().Dto().Id < 1 {
+		return r.results, nil
+	}
+
 	err := r.refreshResultsIfNeeded(db)
 	return r.results, err
 }

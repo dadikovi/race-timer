@@ -6,6 +6,8 @@ import (
 	"net/http/httptest"
 	"os"
 	"testing"
+
+	"github.com/dadikovi/race-timer/server/core"
 )
 
 var a App
@@ -19,6 +21,15 @@ func TestMain(m *testing.M) {
 	code := m.Run()
 	clearTable()
 	os.Exit(code)
+}
+
+func refreshRace() {
+	var err error
+	a.race, err = core.GetRaceInstance(a.DB)
+
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func clearTable() {

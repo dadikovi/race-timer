@@ -13,6 +13,20 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestResultsEndpointWithoutData(t *testing.T) {
+	// given
+	clearTable()
+	refreshRace()
+	var results core.RaceResultsDto
+
+	// when
+	response := callResultsEndpoint(&results)
+	log.Print("get results", response.Body.String())
+
+	// then
+	assert.Equal(t, http.StatusOK, response.Code)
+}
+
 func TestResultsEndpoint(t *testing.T) {
 	// given
 	segmentName := "any-name"
@@ -25,14 +39,12 @@ func TestResultsEndpoint(t *testing.T) {
 	clearTable()
 	callCreateSegmentEndpoint(segmentName, &createdSegment)
 	response := callCreateGroupEndpoint(int(createdSegment.Id), &createdGroup)
-	log.Print("Create active group", response.Body.String())
 
 	// and we register 3 participants in DESC order
 	callRegisterParticipantEndpoint(createdGroup.Id, 3, &participant)
 	callRegisterParticipantEndpoint(createdGroup.Id, 2, &participant)
 	callRegisterParticipantEndpoint(createdGroup.Id, 1, &participant)
 	response = callStartActiveGroupEndpoint()
-	log.Print("Start active group", response.Body.String())
 
 	// and run forest run
 	callParticipantFinishedEndpoint(1, &participant)
@@ -43,7 +55,6 @@ func TestResultsEndpoint(t *testing.T) {
 
 	// when
 	response = callResultsEndpoint(&results)
-	log.Print("Final call", response.Body.String())
 
 	// then
 	assert.Equal(t, http.StatusOK, response.Code)
