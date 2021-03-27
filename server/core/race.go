@@ -125,6 +125,7 @@ func (r *Race) refreshSegmentsGroupStats(db *sql.DB) error {
 
 func (r *Race) refreshActiveGroupStats(db *sql.DB) error {
 	results := *&r.results
+	results.ActiveGroup.Group = r.activeGroup.Dto()
 	results.ActiveGroup.Participants = make([]ParticipantDto, 0)
 
 	rows, err := db.Query(`
