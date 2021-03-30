@@ -1,0 +1,26 @@
+version: '3.7'
+
+services:
+  postgres:
+    image: postgres
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_DB: postgres
+    ports:
+      - 5432:5432
+
+  # ZooKeeper for Kafka, used by tw-task
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    environment:
+      config.file: /config/prometheus.yml
+      storage.tsdb.path: /data/prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ~/Repositories/race-timer/server/.prometheus/prometheus.yml:/config/prometheus.yml
+      - ~/tmp/prometheus:/data/prometheus prom/prometheus

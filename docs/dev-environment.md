@@ -12,14 +12,14 @@
 
 1. Install [Go](https://golang.org/doc/install)
 2. Install Docker
-3. Setup PostgreSQL: 
+3. Start containers:
     ```bash
-    docker ps --format {{.ID}} | xargs docker stop {} # Stop all docker containers 
-    docker run -it -p 5432:5432 -e POSTGRES_PASSWORD=mysecretpassword -d postgres
-
     export RACE_TIMER_DB_USER=postgres
     export RACE_TIMER_DB_NAME=postgres
     export RACE_TIMER_DB_PASSWORD=mysecretpassword
+
+    cd server/.docker
+    docker-compose up -d
     ```
 
 ## Run server tests
