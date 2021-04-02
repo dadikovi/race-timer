@@ -26,9 +26,11 @@ func fetchGroupById(db *sql.DB, id int) (Group, error) {
 	var start sql.NullTime
 	var parentSegmentId int
 
+	timer := startDbTimer("fetchGroupById")
 	if err := db.QueryRow("SELECT id, start, segment_id FROM groups WHERE id = $1", id).Scan(&group.id, &start, &parentSegmentId); err != nil {
 		return group, err
 	}
+	timer.ObserveDuration()
 
 	if start.Valid {
 		group.start = start.Time
@@ -46,17 +48,21 @@ func fetchGroupById(db *sql.DB, id int) (Group, error) {
 }
 
 func (g Group) Save(db *sql.DB) (Group, error) {
+	timer := startDbTimer("saveGroup")
 	err := db.QueryRow(
 		"INSERT INTO groups(id, segment_id) VALUES(DEFAULT, $1) RETURNING id",
 		g.parentSegment.id).Scan(&g.id)
+	timer.ObserveDuration()
 
 	return g, err
 }
 
 func (g Group) StartGroup(db *sql.DB) (Group, error) {
+	timer := startDbTimer("startGroup")
 	err := db.QueryRow(
 		"UPDATE groups SET start = $1 WHERE id = $2 RETURNING start",
 		time.Now().UTC(), g.id).Scan(&g.start)
+	timer.ObserveDuration()
 
 	return g, err
 }

@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/prometheus/client_golang/prometheus/promhttp"
+
 	"github.com/dadikovi/race-timer/server/core"
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
@@ -35,10 +37,12 @@ func (a *App) Initialize(user, password, dbname string) {
 	}
 
 	a.Router = mux.NewRouter()
+	a.Router.Use(prometheusMiddleware)
 	a.initializeRoutes()
 }
 
 func (a *App) Run(addr string) {
+	http.Handle("/metrics", promhttp.Handler())
 	log.Fatal(http.ListenAndServe(addr, a.Router))
 }
 

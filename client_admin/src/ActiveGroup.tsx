@@ -1,7 +1,7 @@
 import { Card, CardContent, Typography, Box, IconButton, Divider } from "@material-ui/core";
 import PlayCircleFilledIcon from '@material-ui/icons/PlayCircleFilled';
 import { ActiveGroupResultsDto } from './model';
-import Participants from './Participants'
+import Participants, {msToHumanReadableDuration} from './Participants'
 import { startActiveGroup, useAsyncError } from './service';
 
 interface ActiveGroupProps {
@@ -14,45 +14,7 @@ function groupStarted(groupResults: ActiveGroupResultsDto): boolean {
     return startDate.getFullYear() > 1 // Go server represents empty date as 0001-01-01
 }
 
-function msToHumanReadableDuration(ms: number) {
-    let response: string = ""
-    const seconds = Math.round(ms / 1000)
-    const numyears = Math.floor(seconds / 31536000);
-    const numdays = Math.floor((seconds % 31536000) / 86400); 
-    const numhours = Math.floor(((seconds % 31536000) % 86400) / 3600);
-    const numminutes = Math.floor((((seconds % 31536000) % 86400) % 3600) / 60);
-    const numseconds = (((seconds % 31536000) % 86400) % 3600) % 60;
 
-    if (numyears) {
-        response += numyears + " years"
-    }
-    if (numdays) {
-        if (response) {
-            response += " "
-        }
-        response += numdays + " days"
-    }
-    if (numhours) {
-        if (response) {
-            response += " "
-        }
-        response += numhours + " hours"
-    }
-    if (numminutes) {
-        if (response) {
-            response += " "
-        }
-        response += numminutes + " m"
-    }
-    if (numseconds) {
-        if (response) {
-            response += " "
-        }
-        response += numseconds + " s"
-    }
-
-    return response;
-}
 
 export default function ActiveGroup(props: ActiveGroupProps) {
     const throwError = useAsyncError();

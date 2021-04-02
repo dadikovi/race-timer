@@ -7,6 +7,46 @@ interface ParticipantsProps {
     participants?: ParticipantDto[] | undefined
 }
 
+export function msToHumanReadableDuration(ms: number) {
+    let response: string = ""
+    const seconds = Math.round(ms / 1000)
+    const numyears = Math.floor(seconds / 31536000);
+    const numdays = Math.floor((seconds % 31536000) / 86400); 
+    const numhours = Math.floor(((seconds % 31536000) % 86400) / 3600);
+    const numminutes = Math.floor((((seconds % 31536000) % 86400) % 3600) / 60);
+    const numseconds = (((seconds % 31536000) % 86400) % 3600) % 60;
+
+    if (numyears) {
+        response += numyears + " years"
+    }
+    if (numdays) {
+        if (response) {
+            response += " "
+        }
+        response += numdays + " days"
+    }
+    if (numhours) {
+        if (response) {
+            response += " "
+        }
+        response += numhours + " hours"
+    }
+    if (numminutes) {
+        if (response) {
+            response += " "
+        }
+        response += numminutes + " m"
+    }
+    if (numseconds) {
+        if (response) {
+            response += " "
+        }
+        response += numseconds + " s"
+    }
+
+    return response;
+}
+
 export default function Participants(props: ParticipantsProps) {    
     let participants = []
     if (props.participants) {
@@ -15,7 +55,7 @@ export default function Participants(props: ParticipantsProps) {
         let label = `#${partipant.startNumber}`
 
         if (partipant.raceTimeMs > 0) {
-            label += ` (${partipant.raceTimeMs / 1000} s)`
+            label += ` (${msToHumanReadableDuration(partipant.raceTimeMs)})`
         }
         participants.push(<Chip
             key={label}
