@@ -32,6 +32,7 @@ var RACE_RESULTS_CACHE_EVICTION_TIMEOUT = 5 * time.Second
 func GetRaceInstance(db *sql.DB) (Race, error) {
 	var instance = Race{}
 
+	timer := startDbTimer("getRaceInstance")
 	if err := db.QueryRow("SELECT active_group_id FROM races").Scan(&instance.activeGroup.id); err != nil {
 		log.Print("Creating initial Race object")
 		if err := db.QueryRow(
@@ -42,6 +43,7 @@ func GetRaceInstance(db *sql.DB) (Race, error) {
 
 		return instance, nil
 	}
+	timer.ObserveDuration()
 
 	err := instance.refreshGroupData(db)
 	return instance, err
@@ -60,9 +62,11 @@ func (r Race) GetActiveGroup() Group {
 }
 
 func (r Race) SetActiveGroup(db *sql.DB, group Group) (Race, error) {
+	timer := startDbTimer("setActiveGroup")
 	if _, err := db.Exec(`UPDATE races SET active_group_id = $1`, group.id); err != nil {
 		return r, err
 	}
+	timer.ObserveDuration()
 
 	r.activeGroup = group
 	return r, nil
