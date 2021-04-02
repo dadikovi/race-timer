@@ -3,4 +3,4 @@ scrape_configs:
   scrape_interval: 2s
   static_configs:
   - targets:
-    - localhost:8010
+    - host.docker.internal:8010

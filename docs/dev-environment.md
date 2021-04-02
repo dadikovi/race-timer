@@ -1,5 +1,26 @@
 # Development environment
-** What do you need before you would start to contribute to the project?**
+
+**What do you need before you would start to contribute to the project?**
+
+# Start required external services
+
+1. Install Docker
+2.  ```
+    cd environment
+    docker-compose up -d
+    ```
+This starts up the database and to o11y stack. Access the latter:
+
+[Grafana](localhost:3000) (admin / admin) 
+
+# Start server and clients
+
+Ofc you can start only the server (and maybe one of the clients if you want to develop that)
+
+## Admin client (React application)
+
+1. Install React
+2. `npm start`
 
 ## Scanner client (Android application)
 
@@ -11,15 +32,11 @@
 ## Server (Go)
 
 1. Install [Go](https://golang.org/doc/install)
-2. Install Docker
-3. Start containers:
+3. Set DB access:
     ```bash
     export RACE_TIMER_DB_USER=postgres
     export RACE_TIMER_DB_NAME=postgres
     export RACE_TIMER_DB_PASSWORD=mysecretpassword
-
-    cd server/.docker
-    docker-compose up -d
     ```
 
 ## Run server tests
