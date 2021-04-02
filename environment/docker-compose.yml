@@ -12,7 +12,6 @@ services:
     ports:
       - 5432:5432
 
-  # ZooKeeper for Kafka, used by tw-task
   prometheus:
     image: prom/prometheus
     container_name: prometheus
@@ -22,5 +21,14 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ~/Repositories/race-timer/server/.prometheus/prometheus.yml:/config/prometheus.yml
+      - ./prometheus.yml:/config/prometheus.yml
       - ~/tmp/prometheus:/data/prometheus prom/prometheus
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - 3000:3000
+    volumes:
+      - ./grafana-datasources:/etc/grafana/provisioning
+      - ~/tmp/grafana:/var/lib/grafana
