@@ -1,7 +1,7 @@
 'use strict';
 
 import React from 'react';
-import { NativeSyntheticEvent } from 'react-native';
+import { NativeSyntheticEvent, ToastAndroid } from 'react-native';
 import { NativeTouchEvent } from 'react-native';
 import { Button } from 'react-native';
 import {
@@ -11,16 +11,20 @@ import {
   Text,
   TextInput,
   View,
+  Switch
 } from 'react-native';
 const axios = require('axios').default;
 import { Card } from 'react-native-elements'
 import { BarCodeReadEvent } from 'react-native-camera';
 import QRCodeScanner from 'react-native-qrcode-scanner';
 import { useEffect } from 'react';
+//import { Switch } from 'react-native-elements/dist/switch/switch';
 
 const App = () => { 
 
   let scanner: QRCodeScanner;
+
+  const [finishMode, onFinishModeChange] = React.useState(true);
   const [serverCode, onServerCodeChange] = React.useState('');
   const [serverConnectionOk, setServerConnectionOk] = React.useState(false);
 
@@ -29,22 +33,48 @@ const App = () => {
   }, [serverCode])
 
   const onCodeScanned = (e: BarCodeReadEvent) => {
-    axios.post(serverUrl(`participants/${e.data}`))
+    if (finishMode) {
+      axios.post(serverUrl(`participants/${e.data}`))
       .then((r:any) => {
         scanner.reactivate()
         console.log(`Finished participant: ${e.data}`)
       })
       .catch((r:any) => {
         scanner.reactivate()
-        console.log(`Error, captured data: ${e.data}`)
+        ToastAndroid.showWithGravity(
+          `Error, captured data: ${e.data}`,
+          ToastAndroid.LONG,
+          ToastAndroid.BOTTOM
+        );
       })
-
+    } else {
+      axios.post(serverUrl(`participants`), {startNumber: new Number(e.data)})
+        .then((r:any) => {
+          scanner.reactivate()
+          console.log(`Finished participant: ${e.data}`)
+        })
+        .catch((r:any) => {
+          scanner.reactivate()
+          ToastAndroid.showWithGravity(
+            `Error, captured data: ${e.data}`,
+            ToastAndroid.LONG,
+            ToastAndroid.BOTTOM
+          );
+        })
+    }
   }
 
   const syncWithServer = (e: NativeSyntheticEvent<NativeTouchEvent>) => {
     axios.get(serverUrl('segments'))
       .then((r:any) => setServerConnectionOk(true))
-      .catch((r:any) => setServerConnectionOk(false))
+      .catch((r:any) => {
+        setServerConnectionOk(false)
+        ToastAndroid.showWithGravity(
+          `Error: ${r}`,
+          ToastAndroid.LONG,
+          ToastAndroid.BOTTOM
+        );
+      })
   }
 
   const serverUrl = (path: string) => {
@@ -78,6 +108,20 @@ const App = () => {
               onRead={onCodeScanned}
             />
         </View>
+        <Card>
+        <View style = {{flexDirection: "row"}}>    
+            <View style={{ flex: 4}}>
+              <Text>Finish mode?</Text>
+            </View>
+            <View style={{ flex: 1}}>
+              <Switch 
+                value={finishMode} 
+                thumbColor={finishMode ? "blue" : "blue"}
+                onValueChange={(switchValue) => onFinishModeChange(switchValue)}
+              />
+            </View>
+          </View>
+        </Card>
       </ScrollView>
     </SafeAreaView>
   );
