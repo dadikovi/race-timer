@@ -8,13 +8,13 @@ import (
 type Participant struct {
 	startNumber int
 	group       Group
-	raceTimeMs  int
+	raceTimeMs  int64
 }
 
 type ParticipantDto struct {
-	StartNumber int `json:"startNumber"`
-	GroupId     int `json:"groupId"`
-	RaceTimeMs  int `json:"raceTimeMs"`
+	StartNumber int   `json:"startNumber"`
+	GroupId     int   `json:"groupId"`
+	RaceTimeMs  int64 `json:"raceTimeMs"`
 }
 
 func MakeParticipantForGroup(startNumber int, group Group) Participant {

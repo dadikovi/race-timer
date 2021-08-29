@@ -7,7 +7,7 @@
 1. Install Docker
 2.  ```
     cd environment
-    docker-compose up -d
+    docker compose up -d
     ```
 This starts up the database and to o11y stack. Access the latter:
 

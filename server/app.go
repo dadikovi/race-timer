@@ -72,7 +72,7 @@ CREATE TABLE IF NOT EXISTS participants
     start_number INTEGER PRIMARY KEY,
 	finish TIMESTAMP,
 	group_id INTEGER,
-	race_time INTEGER,
+	race_time BIGINT,
 	CONSTRAINT participant_group FOREIGN KEY(group_id) REFERENCES groups(id)
 );
 
